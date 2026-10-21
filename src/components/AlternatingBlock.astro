@@ -1,0 +1,183 @@
+---
+// 50/50 Block with a background image
+
+interface Props {
+  background?: string;
+  backgroundStyle?: string;
+  content?: {
+    title?: string;
+    subtitle?: string;
+    text: string | string[];
+    image: string;
+    imageAlt: string;
+  }[];
+  style?: {
+    title?: string;
+    subtitle?: string;
+    text?: string;
+    image?: string;
+    hero?: string;
+  };
+  blur?: boolean;
+  containerStyle?: string;
+  overflow?: "top" | "bottom" | "both" | "none";
+  startingDirection?: "left" | "right";
+  hero?: string;
+  heroAlt?: string;
+  fullWidth?: boolean;
+}
+
+const {
+  background = "#fff",
+  backgroundStyle,
+  content,
+  style,
+  blur,
+  containerStyle = "",
+  overflow = "none",
+  startingDirection = "left",
+  hero,
+  heroAlt,
+  fullWidth = false,
+}: Props = Astro.props;
+const direction = (index) => {
+  if (startingDirection === "right") {
+    return index % 2 > 0 ? "md:flex-row-reverse" : "md:flex-row";
+  }
+  return index % 2 > 0 ? "md:flex-row" : "md:flex-row-reverse";
+}
+const overflowStyle = (overflow) => {
+  switch (overflow) {
+    case "top":
+      return "overflow-top";
+    case "bottom":
+      return "overflow-bottom";
+    case "both":
+      return "overflow-both";
+    default:
+      return "overflow-none";
+  }
+};
+const styleBG = background.includes(".")
+  ? `background-image: url(${background});`
+  : `background-color: ${background};`;
+
+const styleDirTop = startingDirection === "right" ? "10%" : "-10%";
+const styleDirBottom = startingDirection === "right" ? "-10%" : "10%";
+---
+
+<div
+  class={`alt-block-${startingDirection} bg-cover bg-no-repeat bg-center text-black ${backgroundStyle || ""} z-50 relative`}
+  style={styleBG}
+>
+  <div class={blur ? "backdrop-blur-xl" : ""}>
+    {hero && (
+      <div class="mx-auto flex flex-col p-5">
+        <div class="w-full md:w-full md:p-6">
+          <img src={hero} alt={heroAlt} class={style?.hero || "w-full"} />
+        </div>
+      </div>
+    )}
+    <div
+      class={`${!fullWidth && 'max-w-[2000px]'} m-auto ${overflowStyle(overflow)}`}
+    >
+      {
+        content.map((item, index) => (
+          <div
+            class={`alt-block-container ${!fullWidth && 'container'} mx-auto flex flex-col ${direction(index)} p-5 ${containerStyle}`}
+          >
+            <div class="w-full md:w-1/2 md:px-6">
+              {item.title && <h2 class={style?.title || ""}>{item.title}</h2>}
+              {item.subtitle && <h3 class={style?.subtitle || ""}>{item.subtitle}</h3>}
+              {Array.isArray(item.text) ? (
+                item.text.map((text) => <p class={style?.text || ""}>{text}</p>)
+              ) : (
+                <p class={style?.text || ""}>{item.text}</p>
+              )}
+            </div>
+            <div class="w-full md:w-1/2 md:px-6">
+              <img src={item.image} alt={item.imageAlt} class={style?.image || ""} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style define:vars={{styleDirTop, styleDirBottom}}>
+  @media screen and (min-width: 768px) {
+    .overflow-top > div:first-child img {
+      transform: translateY(-60px);
+      margin-bottom: -25px;
+      justify-content: start;
+    }
+    .overflow-both > div:first-child img {
+      transform: translateY(-60px);
+      margin-bottom: -25px;
+    }
+    .alt-block-left .alt-block-container:not(.container):nth-child(odd) > div img{
+    position: relative;
+    left: -45px;
+    float: left;
+  }
+  .alt-block-left .alt-block-container:not(.container):nth-child(even) > div img{
+    position: relative;
+    right: -45px;
+    float: right;
+  }
+
+  .alt-block-right .alt-block-container:not(.container):nth-child(odd) > div img{
+    position: relative;
+    right: -45px;
+    float: right;
+  }
+
+  .alt-block-right .alt-block-container:not(.container):nth-child(even) > div img{
+    position: relative;
+    left: -45px;
+    float: left;
+  }
+  }
+
+  .overflow-bottom > div:last-child img {
+    transform: translateY(60px);
+    margin-top: -25px;
+  }
+
+  .overflow-both > div:last-child img {
+    transform: translateY(60px);
+    margin-top: -25px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .overflow-top > div:first-child img {
+      transform: translateX(var(--styleDirTop));
+      margin-bottom: 0;
+    }
+    .overflow-top > div:last-child img {
+      transform: translateX(var(--styleDirBottom));
+      margin-top: 0;
+    }
+    .overflow-bottom > div:last-child img {
+      transform: translate(var(--styleDirBottom), 60px);
+      margin-top: -60px;
+    }
+    .overflow-bottom > div:first-child img {
+      transform: translateX(var(--styleDirTop));
+    }
+    .overflow-both > div:first-child img {
+      transform: translateX(var(--styleDirTop));
+    }
+    .overflow-both > div:last-child img {
+      transform: translate(var(--styleDirBottom), 60px);
+      margin-top: -60px;
+    }
+    .overflow-none > div > div:last-child {
+      width: 120%;
+    }
+    .overflow-none > div {
+      padding-bottom: 0;
+    }
+  }
+</style>

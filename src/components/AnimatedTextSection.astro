@@ -1,0 +1,115 @@
+---
+const { heading = "", text = "", backgroundImage = "" } = Astro.props;
+const uid = `heading-effect-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<section
+  class={`relative min-h-[100svh] flex items-center justify-center overflow-hidden text-white ${uid}`}
+  data-animate-section
+>
+  <!-- background layer -->
+<div class="bg-layer absolute inset-0 bg-cover bg-center scale-100 transition-transform duration-[1000ms]"
+  style={`background-image: url(${backgroundImage})`}
+></div>
+
+<!-- overlay -->
+<div class="overlay absolute inset-0 opacity-0 bg-black/40 transition-opacity duration-[500ms]"></div>
+
+<div class="relative z-10 px-6 text-center">
+  <div class="heading-wrapper max-w-[1200px] mx-auto flex flex-col items-center transition-all duration-[800ms]">
+    <div class="text-center">
+
+      <h1 class="heading-element text-[150px] font-bold italic transition-all duration-[800ms]">
+        <span class="heading-text"></span><span class="cursor opacity-0">|</span>
+      </h1>
+
+      <div class="underline mx-auto mt-2 h-[6px] w-0 bg-blue-500 transition-all duration-[800ms]"></div>
+
+    </div>
+  </div>
+
+  <p class="body-text no-effect max-w-[1200px] mx-auto mt-24 text-[70px] opacity-0 translate-y-4 transition-all duration-[800ms]">
+    {text}
+  </p>
+</div>
+</section>
+
+<script define:vars={{ heading, uid }}>
+  const section = document.querySelector(`.${uid}`);
+
+  const bgLayer = section.querySelector(".bg-layer");
+  const overlay = section.querySelector(".overlay");
+  const headingEl = section.querySelector(".heading-element");
+  const headingText = section.querySelector(".heading-text");
+  const cursor = section.querySelector(".cursor");
+  const textEl = section.querySelector(".body-text");
+  const wrapper = section.querySelector(".heading-wrapper");
+  const underline = section.querySelector(".underline");
+
+  let hasAnimated = false;
+
+  function playIntro() {
+    bgLayer.classList.remove("scale-100");
+    bgLayer.classList.add("scale-[120%]");
+
+    setTimeout(() => {
+      overlay.classList.remove("opacity-0");
+      overlay.classList.add("opacity-100");
+    }, 500);
+
+    setTimeout(typeWriter, 1000);
+  }
+
+  function typeWriter() {
+    let i = 0;
+
+    function type() {
+      cursor.classList.remove("opacity-0");
+      cursor.classList.add("opacity-100");
+
+      if (i < heading.length) {
+        headingText.textContent += heading.charAt(i);
+        i++;
+
+        setTimeout(type, 150);
+      } else {
+        cursor.classList.remove("opacity-100");
+        cursor.classList.add("opacity-0");
+        runSequence();
+      }
+    }
+
+    type();
+  }
+
+  function runSequence() {
+    const shrinkDelay = 100;
+    const shrinkDuration = 800;
+
+    setTimeout(() => {
+      headingEl.classList.remove("text-[150px]");
+      headingEl.classList.add("text-[100px]");
+      wrapper.classList.add("-mt-[20svh]");
+    }, shrinkDelay);
+
+    setTimeout(() => {
+      underline.classList.remove("w-0");
+      underline.classList.add("w-full");
+    }, shrinkDelay + shrinkDuration);
+
+    setTimeout(() => {
+      textEl.classList.remove("opacity-0", "translate-y-4");
+      textEl.classList.add("opacity-100", "translate-y-0");
+    }, shrinkDelay + shrinkDuration);
+  }
+
+  const observer = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && !hasAnimated) {
+      hasAnimated = true;
+      playIntro();
+      observer.disconnect();
+    }
+  }, { threshold: 0.7 });
+
+  observer.observe(section);
+</script>

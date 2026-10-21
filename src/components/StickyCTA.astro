@@ -1,0 +1,90 @@
+---
+interface Props {
+  logo?: string;
+  logoStyle?: string;
+  text: string;
+  link: string;
+  textColour?: string;
+  backgroundColour?: string;
+  tracking?: string;
+  direction?: "column" | "row";
+  rounded: boolean;
+}
+import RightArrow from "../../public/images/ui/icon-cta-square-arrow.svg?raw";
+const {
+  logo,
+  logoStyle = "w-[120px]",
+  text,
+  link,
+  textColour = "#fff",
+  backgroundColour = "#000",
+  tracking,
+  direction = "row",
+  rounded = false,
+}: Props = Astro.props;
+
+import { plausibleClass } from "../helpers";
+---
+
+{
+  text && (
+    <a
+      id="sticky-cta"
+      href={link}
+      rel="nofollow"
+      class={`fixed bottom-[10%] left-0 z-50 drop-shadow-lg ${plausibleClass(tracking)}`}
+      style={`background-color:${backgroundColour};color:${textColour}; ${rounded ? "border-top-right-radius: 4px; border-bottom-right-radius: 4px" : ""}`}
+    >
+      <div class="flex justify-between items-center w-full">
+        <div
+          class={`p-3 flex ${direction === "column" ? "flex-col" : "flex-row"} justify-center items-center`}
+        >
+          {logo && (
+            <img class={logoStyle} src={logo} alt="logo" class="w-8 h-8" />
+          )}
+          <div class="text-xs pt-1">{text}</div>
+        </div>
+        <div class="p-2 share-button">
+          <Fragment set:html={RightArrow} />
+        </div>
+      </div>
+    </a>
+  )
+}
+
+<script>
+  document.addEventListener("scroll", (e) => {
+    const cta = document.getElementById("sticky-cta");
+    if (cta) {
+      if (window.scrollY > 150) {
+        cta.style.transform = "translateX(0)";
+      } else {
+        cta.style.transform = "translateX(-100%)";
+      }
+    }
+  });
+</script>
+
+<style is:global define:vars={{ textColour, backgroundColour }}>
+  #sticky-cta {
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .share-button > svg {
+    height: 2rem;
+    width: 2rem;
+    margin-left: 0.5rem;
+    fill: var(--backgroundColour);
+  }
+  .share-button > svg > g > #Rectangle_91 {
+    fill: var(--textColour);
+    stroke: var(--backgroundColour);
+  }
+  @media screen and (min-width: 768px) {
+    .share-button > svg {
+      height: 3rem;
+      width: 3rem;
+      margin-left: 1rem;
+    }
+  }
+</style>

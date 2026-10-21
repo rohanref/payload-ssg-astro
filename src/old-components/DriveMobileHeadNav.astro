@@ -1,0 +1,32 @@
+<div id="mobile-header" class="fixed !w-[100vw] top-0 hidden md:hidden">
+    <div
+        class="flex justify-between items-center bg-[url(images/Sticky_Top_Black_Bar.png)] [background-size:100%_100%] py-2 px-10"
+    >
+        <div id="left">
+            <a href="">
+                <img class="w-4" src="images/Chevron_Left.svg" alt="Previous" />
+            </a>
+        </div>
+        <div>
+            <span id="current-section">current</span>
+        </div>
+        <div id="right">
+            <a href="">
+                <img class="w-4" src="images/Chevron_Right.svg" alt="Next" />
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    #left a img,
+    #right a img {
+        opacity: 1;
+        transition: 0.3s;
+    }
+
+    #left a[href=""] img,
+    #right a[href=""] img {
+        opacity: 0;
+    }
+</style>

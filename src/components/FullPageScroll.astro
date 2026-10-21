@@ -1,0 +1,325 @@
+---
+import ScrollToViewText from "./ScrollToViewText.astro";
+
+// Set the sections data here, e.g., title, content, etc.
+interface Section {
+  title?: string;
+  quote?: string;
+  content?: string;
+  position?: string;
+  image?: string;
+  imageAlt?: string;
+  backgroundContent?: string;
+  video?: string;
+  mobileVideo?: string;
+}
+
+interface Props {
+  sections: Section[];
+}
+
+const { sections } = Astro.props;
+---
+
+<div class="section-container" id="section-container">
+  <slot name="header" />
+  {
+    sections.map(
+      (
+        {
+          title,
+          quote,
+          content,
+          position,
+          image,
+          imageAlt,
+          backgroundContent,
+          video,
+          mobileVideo,
+        },
+        index
+      ) => (
+        <div class="section">
+          {backgroundContent && (
+            <div class={`background ${backgroundContent}`} />
+          )}
+          {video && (
+            <div class="video md:block hidden">
+              <video autoplay loop muted playsinline>
+                <source src={video} type="video/mp4" />
+              </video>
+            </div>
+          )}
+          {mobileVideo && (
+            <div class="video md:hidden block">
+              <video autoplay loop muted playsinline>
+                <source src={mobileVideo} type="video/mp4" />
+              </video>
+            </div>
+          )}
+          <div id={`sect-${index}`} class={`content ${image ? image : ""} ${position ? position : ""}`}>
+            <div class="max-w-[1024px] w-full text-center mx-auto text-white">
+              <h2 class="text-2xl uppercase font-normal">{title}</h2>
+              <p class="py-8 sm:px-[10%] sm:text-2xl text-sm font-bold">{quote}</p>
+              <p class="pb-8 sm:px-[10%] sm:text-2xl text-sm">{content}</p>
+            </div>
+          </div>
+        </div>
+      )
+    )
+  }
+  <slot name="footer" />
+  <ScrollToViewText />
+</div>
+
+<!-- Navigation dots container -->
+<div class="navigation-dots">
+  <!-- Dots will be dynamically generated in JavaScript -->
+</div>
+
+<style is:global>
+  body {
+    overflow: hidden;
+  }
+  .section-container {
+    position: relative;
+    height: calc(100vh - 70px);
+    width: 100vw;
+  }
+
+  .section {
+    position: absolute;
+    height: 100%;
+    width: 100vw;
+    opacity: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 1s ease;
+  }
+
+  .section .video {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+  }
+
+  .section .video video {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .section .background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+  }
+
+  .section .content {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding-top: 5vh;
+    padding-bottom: 150px;
+    opacity: 0;
+    transition: opacity 1s ease;
+    z-index: 1;
+    background-size:cover;
+  }
+
+  .section.visible {
+    opacity: 1;
+  }
+
+  .section.visible .background {
+    opacity: 1;
+    animation: fadeIn 2.5s ease;
+  }
+
+  .section.visible .content {
+    opacity: 1;
+    animation: fadeIn 1.5s ease;
+  }
+
+  .section.visible .content * {
+    animation: fadeIn 4s ease;
+  }
+
+  .navigation-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index:999;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .dot.active {
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @media (max-width:420px){
+    .section-container {
+        height: calc(100vh - 91px);
+    }
+  }
+</style>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const updateNavigationDots = () => {
+      const sections = document.querySelectorAll(".section");
+      const dots = document.querySelectorAll(".dot");
+
+      let currentSectionIndex = -1;
+
+      // Find the current visible section
+      sections.forEach((section, index) => {
+        if (section.classList.contains("visible")) {
+          currentSectionIndex = index;
+        }
+      });
+
+      // Update the navigation dots based on the current visible section
+      if (currentSectionIndex !== -1) {
+        dots.forEach((dot, index) => {
+          dot.classList.remove("active");
+          if (index === currentSectionIndex) {
+            dot.classList.add("active");
+          }
+        });
+      }
+    };
+
+    // Create navigation dots based on the total sections
+    const createNavigationDots = () => {
+      const dotsContainer = document.querySelector(".navigation-dots");
+      const sections = document.querySelectorAll(".section");
+
+      dotsContainer.innerHTML = ''; // Clear any existing dots
+
+      sections.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.classList.add('dot');
+        dot.dataset.index = index;
+        dotsContainer.appendChild(dot);
+
+        // Add click event listener to each dot
+        dot.addEventListener('click', () => {
+          goToSection(index);
+        });
+      });
+
+      updateNavigationDots(); // Ensure the first dot is active on initialization
+    };
+
+    const goToSection = (index) => {
+      const sections = document.querySelectorAll(".section");
+      sections.forEach((section, i) => {
+        section.classList.remove("visible");
+        if (i === index) {
+          section.classList.add("visible");
+        }
+      });
+      updateNavigationDots(); // Update the navigation dots after navigating to a new section
+    };
+
+    // Add scroll behavior for navigating through sections
+    let scrollTimeout;
+    const scrollDelay = 50;
+    const handleScroll = (deltaY) => {
+      const sections = document.querySelectorAll(".section");
+      let currentSection = 0;
+      sections.forEach((section, index) => {
+        if (section.classList.contains("visible")) {
+          currentSection = index;
+        }
+      });
+
+      if (deltaY > 0) {
+        if (currentSection < sections.length - 1) {
+          sections[currentSection].classList.remove("visible");
+          sections[currentSection + 1].classList.add("visible");
+        }
+      } else {
+        if (currentSection > 0) {
+          sections[currentSection].classList.remove("visible");
+          sections[currentSection - 1].classList.add("visible");
+        }
+      }
+
+      updateNavigationDots(); // Update the navigation dots based on the scroll
+    };
+
+    window.addEventListener("wheel", (e) => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => handleScroll(e.deltaY), scrollDelay);
+    });
+
+    let touchStartY = 0;
+    let touchEndY = 0;
+    const touchDeadzone = 30;
+
+    window.addEventListener("touchstart", (e) => {
+      touchStartY = e.changedTouches[0].screenY;
+    });
+
+    window.addEventListener("touchend", (e) => {
+      touchEndY = e.changedTouches[0].screenY;
+      const deltaY = touchStartY - touchEndY;
+      if (Math.abs(deltaY) > touchDeadzone) {
+        handleScroll(deltaY);
+      }
+    });
+
+    // Initialize sections and dots
+    const initializeSections = () => {
+      const sections = document.querySelectorAll(".section");
+
+      // Ensure the first section is visible on page load
+      if (sections.length > 0) {
+        sections[0].classList.add("visible");
+        createNavigationDots(); // Create navigation dots based on sections
+      }
+    };
+
+    // Polling to update navigation dots every 500ms
+    setInterval(() => {
+      updateNavigationDots(); // Update dots based on the current visible section
+    }, 500);
+
+    // Initialize sections after page load
+    initializeSections();
+  });
+</script>

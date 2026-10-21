@@ -1,0 +1,59 @@
+---
+interface Props {
+  title: string;
+  articles: Article[];
+}
+
+interface Article {
+  title: string;
+  content: string;
+  image: string;
+  imageAlt: string;
+  link?: string;
+  tracking?: string;
+}
+
+const { title, articles }: Props = Astro.props;
+
+import { plausibleClass } from "../helpers";
+---
+
+<div class="px-[10%] py-10 bg-black text-white">
+  <h2 class="text-xl md:text-2xl font-bold text-center md:text-left pb-6">
+    {title}
+  </h2>
+  <!-- Left right column -->
+  <div
+    class="flex flex-col md:flex-row md:flex-wrap justify-center md:justify-start gap-[4%]"
+  >
+    {
+      articles.map((article) => (
+        <div class="w-full md:w-1/2 md:basis-[46%] md:my-[2%] max-sm:mb-10 ">
+          {article.link && (
+            <a
+              href={article.link}
+              target="_blank"
+              rel="nofollow"
+              class={plausibleClass(article.tracking)}
+            >
+              <img src={article.image} alt={article.imageAlt} />
+              <div class="py-5 h-max">
+                <span class="font-bold mb-4">{article.title}</span>
+                <p class="text-base">{article.content}</p>
+              </div>
+            </a>
+          )}
+          {!article.link && (
+            <div>
+              <img src={article.image} alt={article.imageAlt} />
+              <div class="py-5 h-max">
+                <span class="font-bold mb-4">{article.title}</span>
+                <p class="text-base">{article.content}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      ))
+    }
+  </div>
+</div>

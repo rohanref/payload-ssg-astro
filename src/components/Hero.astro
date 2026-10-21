@@ -1,0 +1,22 @@
+---
+interface Props {
+  ultraWide: string;
+  desktop: string;
+  tablet?: string;
+  mobile?: string;
+  alt: string;
+  style?: string;
+}
+
+const { ultraWide, desktop, tablet, mobile, alt, style }: Props = Astro.props;
+---
+
+<div class="w-full">
+  <picture>
+    <source srcset={ultraWide} media="(min-width: 1920px)" />
+    <source srcset={desktop} media="(min-width: 1024px)" />
+    <source srcset={tablet} media="(min-width: 640px)" />
+    <source srcset={mobile} media="(min-width: 0)" />
+    <img src={ultraWide} alt={alt} class={style} />
+  </picture>
+</div>

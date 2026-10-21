@@ -1,0 +1,41 @@
+---
+import Scroll from "../../public/images/ui/ScrollArrows.svg?raw";
+---
+<div
+class="scroll-text absolute bottom-[30px] w-full z-10 text-center"
+>
+    <div class="flex flex-row gap-2 items-center justify-center py-4">
+        <p class="text-white md:text-2xl text-xl"><span class="md:hidden inline-block">Swipe</span><span class="md:inline-block hidden">Scroll</span> to explore</p>
+        <p class="*:fill-white *:w-[12px] md:pt-2 pt-1">
+            <Fragment set:html={Scroll} />
+        </p>
+    </div>
+</div>
+<style>
+    .scroll-text {
+        animation: fadeIn 1s ease-in-out 1s forwards;
+        opacity: 0;
+    }
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
+
+<style is:global>
+    .section.visible + .scroll-text {
+        animation: fadeOut 1s ease-in-out forwards;
+    }
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+</style>

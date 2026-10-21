@@ -1,0 +1,80 @@
+---
+// 50/50 Block with a background image
+
+interface Props {
+  backgroundImage: string;
+  backgroundStyle?: string;
+  left?: {
+    title?: string;
+    subtitle?: string;
+    text?: string | string[];
+    style?: {
+      title?: string;
+      subtitle?: string;
+      text?: string;
+    };
+  };
+  right?: {
+    title?: string;
+    subtitle?: string;
+    text?: string | string[];
+    style?: {
+      title?: string;
+      subtitle?: string;
+      text?: string;
+    };
+  };
+  blur?: boolean;
+  containerStyle?: string;
+}
+
+const { backgroundImage, backgroundStyle, left, right, blur, containerStyle = '' }: Props = Astro.props;
+
+const sections = [left, right];
+---
+
+<div
+  class={`bg-cover bg-no-repeat bg-center ${backgroundStyle}`}
+  style={`background-image: url(${backgroundImage});`}
+>
+  <div class={blur ? "backdrop-blur-xl" : ""}>
+    <div class="max-w-[2000px] m-auto">
+      <div
+        class={`container mx-auto flex flex-col ${left ? "md:flex-row" : "md:flex-row-reverse"} p-4 md:p-20 ${containerStyle}`}
+      >
+        {
+          sections.map(
+            (section) =>
+              section && (
+                <div class="w-full md:w-1/2 p-8">
+                  {section?.title && (
+                    <h2
+                      class={`text-3xl font-bold text-white ${section?.style?.title}`}
+                    >
+                      {section.title}
+                    </h2>
+                  )}
+                  {section?.subtitle && (
+                    <h3
+                      class={`text-xl font-bold text-white ${section?.style?.subtitle}`}
+                    >
+                      {section.subtitle}
+                    </h3>
+                  )}
+                  {Array.isArray(section?.text) &&
+                    section.text.map((text) => (
+                      <p class={`text-white ${section?.style?.text}`}>{text}</p>
+                    ))}
+                  {!Array.isArray(section?.text) && section?.text && (
+                    <p class={`text-white ${section?.style?.text}`}>
+                      {section.text}
+                    </p>
+                  )}
+                </div>
+              )
+          )
+        }
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+---
+interface Props {
+  text: string;
+  textColor?: string;
+  backgroundColor?: string;
+  style?: string;
+  quoteAuthor?: string;
+}
+
+const {
+  text,
+  textColor = "#fff",
+  backgroundColor = "#000",
+  style = "",
+  quoteAuthor,
+}: Props = Astro.props;
+---
+
+<div
+  class="px-[10%] py-16"
+  style={`color: ${textColor}; background-color: ${backgroundColor}`}
+>
+  <blockquote class={`${style}`}>{text}{quoteAuthor && <span>{quoteAuthor}</span>}</blockquote>
+</div>

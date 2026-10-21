@@ -1,0 +1,205 @@
+---
+interface Props {
+  chapters: {
+    video: string;
+    thumbnail: string;
+    alt: string;
+  }[];
+  backgroundImage?: string;
+  backgroundColor?: string;
+  classes?: string;
+  tracking?: boolean;
+  fullVideo?: string;
+}
+
+const {
+  chapters = [],
+  backgroundImage,
+  backgroundColor,
+  classes,
+  tracking = false,
+  fullVideo,
+}: Props = Astro.props;
+
+const subChapters = chapters.splice(1);
+import { nofollow, plausibleClass } from "../helpers";
+---
+
+<div
+  class={`p-8 pt-20 flex flex-col items-center justify-center relative text-black ${classes || ''}`}
+  style={`
+    ${backgroundColor ? `background-color: ${backgroundColor};` : ''}
+    ${backgroundImage ? `background-image: url(${backgroundImage});` : ''}
+  `}
+>
+  <slot />
+  <!-- Video Element -->
+  <iframe
+    id="featurevideo"
+    style="display: none;"
+    height="640px"
+    width="100%"
+    title="Video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+    src={chapters[0].video}
+    class="hidden md:block"
+  >
+  </iframe>
+  <!-- Placeholder Image -->
+  {
+    chapters[0].thumbnail && (
+      <img
+        id="videoplaceholder"
+        src={chapters[0].thumbnail}
+        alt={chapters[0].alt}
+        height="640"
+        width="100%"
+        class="hidden md:block cursor-pointer"
+      />
+    )
+  }
+
+  <slot name="middle" />
+
+  <div
+    class="flex flex-col md:flex-row items-center justify-between pt-5 gap-4 max-w-[1200px]"
+  >
+    {
+      subChapters.map((chapter, index) => (
+        <div class="video-chapter">
+          <img
+            src={chapter.thumbnail}
+            alt={`Chapter ${index + 1}`}
+            id={`chapter-${index}`}
+            class="cursor-pointer w-auto chapter-thumbnail hover:scale-105 duration-100"
+          />
+        </div>
+      ))
+    }
+  </div>
+  <div class="my-10 text-right w-full max-w-[1200px]">
+    <a
+      class={`text-white py-4 px-6 bg-[rgba(0,0,0,0.5)] hover:bg-black duration-300 rounded-md ${plausibleClass("Drive TV - Full Episode")}`}
+      href={fullVideo}
+      rel="nofollow"
+      target="_blank"
+      >Watch Full Episode <img
+        class="w-4 invert align-sub ml-2 right inline-block"
+        src="images/ui/angle-right.svg"
+        alt="Go to video"
+      /></a
+    >
+  </div>
+</div>
+<script define:vars={{ tracking, subChapters }}>
+  // Plausible Custom Tracking
+  // e.g plausible('Download', {props: {method: 'HTTP', position: 'footer'}})
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const chapters = document.querySelectorAll(".chapter-thumbnail");
+
+    chapters.forEach((chapter) => {
+      chapter.addEventListener("click", function (e) {
+        const id = e.target.id.split("-")[1];
+        const vid = document.querySelector("iframe#featurevideo");
+        const placeholder = document.querySelector("#videoplaceholder");
+        // if mobile clone the #featurevideo and append after the clicked thumbnail
+        // then hide the thumbnail and show the video.
+        // Remove the video from the other thumbnails if exists and show the placeholder
+
+        if (window.innerWidth < 768) {
+          const mobileVid = document.querySelector(".mobile-video");
+          if (mobileVid) {
+            // Find the parent and remove the video
+            mobileVid.parentNode.querySelector(
+              ".chapter-thumbnail",
+            ).style.display = "block";
+            mobileVid.remove();
+          }
+
+          const vidClone = vid.cloneNode(true);
+          vidClone.src = subChapters[id].video;
+          vidClone.style.display = "block";
+          // set height to the same height as the thumbnail
+          vidClone.height = e.target.height;
+          vidClone.classList.add("mobile-video");
+          vidClone.src.includes("?")
+        ? (vidClone.src += "&autoplay=1")
+        : (vidClone.src += "?autoplay=1");
+          e.target.parentNode.appendChild(vidClone);
+          e.target.style.display = "none";
+          vid.style.display = "none";
+          placeholder.style.display = "none";
+          return;
+        } else {
+          vid.src = subChapters[id].video;
+          vid.style.display = "block";
+          placeholder.style.display = "none";
+          vid.src.includes("?")
+        ? (vid.src += "&autoplay=1")
+        : (vid.src += "?autoplay=1");
+          //Uncomment below if this is a vimeo embed
+          //playVimeo();
+        }
+      });
+    });
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const placeholder = document.querySelector("#videoplaceholder");
+
+    if (!placeholder) {
+      return;
+    }
+    placeholder.addEventListener("click", function () {
+      const vid = document.querySelector("iframe#featurevideo");
+      if (vid) {
+        vid.style.display = "block";
+        vid.src.includes("?")
+          ? (vid.src += "&autoplay=1")
+          : (vid.src += "?autoplay=1");
+        placeholder.style.display = "none";
+
+        // Get the alt text of the clicked thumbnail
+        const alt = placeholder.getAttribute("alt");
+        // Track when people Click the Video
+        if (tracking) {
+          plausible("Click Video - " + alt);
+        }
+      }
+    });
+  });
+
+  //This makes the vimeo embed play with sound like it was clicked by the user
+  function playVimeo() {
+    const player = new Vimeo.Player(
+      document.querySelector("#featured-video iframe"),
+    );
+    player.play();
+  }
+</script>
+
+<style>
+  #featurevideo {
+    display: none;
+    max-width: 1200px !important;
+    max-height: 640px !important;
+    aspect-ratio: 16 / 9;
+  }
+  #videoplaceholder {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 640px;
+    margin: auto;
+  }
+  @media (max-width: 768px) {
+    .video-chapter {
+      width: 100%;
+    }
+  }
+</style>

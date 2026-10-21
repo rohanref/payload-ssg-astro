@@ -1,0 +1,396 @@
+---
+import Layout from "../layouts/Layout.astro";
+import NavBar from "../components/NavBar.astro";
+
+// New Components
+import Hero from "../components/Hero.astro";
+import Block from "../components/Block.astro";
+import ImageBlock from "../components/ImageBlock.astro";
+import Carousel from "../components/Carousel.astro";
+import FeatureImage from "../components/FeatureImage.astro";
+import BookTestDrive from "../components/BookTestDrive.astro";
+import FeaturedArticles from "../components/FeaturedArticles.astro";
+import RelatedArticles from "../components/RelatedArticles.astro";
+import FeaturedText from "../components/FeaturedText.astro";
+import StickyCTA from "../components/StickyCTA.astro";
+import VideoBlockChapters from "../components/VideoBlockChapters.astro";
+import VideoScrollBlock from "../components/VideoScrollBlock.astro";
+import VideoScrollBlockImages from "../components/VideoScrollBlockImages.astro";
+import HorizontalScrollCount from "../components/HorizontalScrollCount.astro";
+import Parallax from "../components/Parallax.astro";
+import AnimatedTextSection from "../components/AnimatedTextSection.astro";
+import DriveForm from "../components/DriveForm.astro";
+import PageContent from "../components/PageContent.astro";
+
+// Old Components
+import DriveHero from "../old-components/DriveHero.astro";
+import DriveContent from "../old-components/DriveContent.astro";
+import DriveBlock01InteractiveExperience from "../old-components/DriveBlock01InteractiveExperience.astro";
+import DriveBlock02Design from "../old-components/DriveBlock02Design.astro";
+import DriveBlock03Interior from "../old-components/DriveBlock03Interior.astro";
+import DriveBlock04HotspotCarousel from "../old-components/DriveBlock04HotspotCarousel.astro";
+import DriveBlock05FeaturesTechnology from "../old-components/DriveBlock05FeaturesTechnology.astro";
+import DriveBlock06FeatureDetails from "../old-components/DriveBlock06FeatureDetails.astro";
+import DriveBlock07MazdaBar from "../old-components/DriveBlock07MazdaBar.astro";
+import DriveBlock08RelatedLinks from "../old-components/DriveBlock08RelatedLinks.astro";
+import DriveBlockBottomStickyNav from "../old-components/DriveBlockBottomStickyNav.astro";
+import DriveMobileHeadNav from "../old-components/DriveMobileHeadNav.astro";
+
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout
+  title="Drive - Mazda Interactive Showroom"
+  description="Discover the remarkable Mazda CX-60 and Mazda CX-90 SUVs that redefine elegance and power, elevating the driving experience to new heights."
+  url={`https://brandedcontent.drive.com.au${base}`}
+  jpegImage={`https://brandedcontent.drive.com.au${base}images/dbs-og-image.jpg`}
+  GTM="G-2HBF4HYLXD"
+>
+  <NavBar
+    homeLink="#"
+    link="/full-page-scroll-demo"
+    linkText="Full Page Scroll Demo"
+  />
+  <main>
+    <Parallax layers={[
+      { src: "images/page/p-1.png", speed: 0.2 },
+      { src: "images/page/p-2.png", speed: 0.5 },
+      { src: "images/page/p-3.png", speed: 0.8 },
+      { src: "images/page/p-4.png", speed: 0.9 },
+    ]} />
+
+    <PageContent
+      title={"Test2"}
+      slug={"test2"}
+      contentHTML={"<div class=\"payload-richtext\"><p>Test content</p></div>"}
+      metaTitle={"Meta Test2"}
+      metaImage={"https://ssg-drive-lp.s3.ap-southeast-2.amazonaws.com/placeholder.webp"}
+      metaDescription={"Meta descript Test2"}
+    />
+
+    <DriveForm />
+
+    <Hero
+      ultraWide="images/dbs-og-image.jpg"
+      desktop="images/dbs-og-image.jpg"
+      tablet="images/dbs-og-image.jpg"
+      mobile="images/dbs-og-image.jpg"
+      alt="Mazda CX-60 and CX-90"
+      style="w-full"
+    />
+
+    <AnimatedTextSection
+      heading="Reason 1"
+      text="This is where the story begins. Smooth, simple, and animated."
+      backgroundImage="images/page/bmw.jpg"
+    />
+    <AnimatedTextSection
+      heading="Reason 2"
+      text="This is where the story begins. Smooth, simple, and animated."
+      backgroundImage="images/page/dodge.jpg"
+    />
+
+    <Block
+      backgroundImage="images/page/hellcat.jpg"
+      left={{
+        title: "Left Title",
+        subtitle: "Left Subitle",
+        text: [
+          "This is a big paragraph of text",
+          "This is a big paragraph of text",
+        ],
+        style: {
+          title: "text-red-400 text-right",
+          text: "text-red-400 text-right",
+        },
+      }}
+      right={{
+        title: "Right Title",
+        subtitle: "Right Subitle",
+        text: "Right Text",
+      }}
+      blur={true}
+    />
+
+    
+
+    <HorizontalScrollCount/>
+
+    <ImageBlock
+      backgroundImage="images/page/lambo.jpg"
+      imagePosition="right"
+      images={{
+        top: {
+          src: "images/page/vw-bug.jpg",
+          alt: "Image Alt",
+        },
+        bottom: {
+          src: "images/page/dodge.jpg",
+          alt: "Image Alt",
+        },
+      }}
+      text={{
+        title: "Image Text Title",
+      }}
+      blur={true}
+    />
+    <VideoScrollBlock video="https://assets.codepen.io/39255/output_960.mp4" videoID="scrollvid1" />
+
+    <Carousel
+      caption="Swipe to explore"
+      images={[
+        "images/page/hellcat.jpg",
+        "images/page/lambo.jpg",
+        "images/page/vw-bug.jpg",
+        "images/page/dodge.jpg",
+        "images/page/nissan.jpg",
+      ]}
+      textColor="#f0dac3"
+      barColor="#f00"
+      backgroundColor="#000"
+    />
+
+    <FeatureImage
+      image="images/page/ford.jpg"
+      title="Feature Image Title"
+      textPosition="bottom-left"
+    />
+
+    <VideoScrollBlock video="images/page/BMW_Parallax_Effect.mp4" videoID="scrollvid2" />
+
+    <Block
+      backgroundImage="images/page/hellcat.jpg"
+      left={{
+        title: "Left Title",
+        subtitle: "Left Subitle",
+        text: [
+          "This is a big paragraph of text",
+          "This is a big paragraph of text",
+        ],
+        style: {
+          title: "text-red-400 text-right",
+          text: "text-red-400 text-right",
+        },
+      }}
+      right={{
+        title: "Right Title",
+        subtitle: "Right Subitle",
+        text: "Right Text",
+      }}
+      blur={true}
+    />
+
+    <FeatureImage image="images/page/bmw.jpg" />
+
+    <FeaturedText
+      text="Explore the map below to discover the key features of car models. Click on the hotspots to learn more."
+      backgroundColor="#ffefe6"
+      textColor="#d91e1e"
+      style="w-1/2 font-bold inline-block"
+    />
+
+    <BookTestDrive
+      backgroundColor="#fff"
+      linkText="Book a test drive"
+      linkUrl="https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios"
+      logo="images/Drive_BrandStudios_Logo.webp"
+      logoAlt="Mazda Logo"
+      buttonColor="black"
+      buttonTextColor="#fff"
+    />
+
+    <FeaturedArticles
+      title="Featured articles"
+      articles={[
+        {
+          title: "Article Title",
+          content: "Article Content",
+          image: "images/page/hellcat.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          content: "Article Content",
+          image: "images/page/lambo.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          content: "Article Content",
+          image: "images/page/vw-bug.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          content: "Article Content",
+          image: "images/page/vw-bug.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          content: "Article Content",
+          image: "images/page/hellcat.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          content: "Article Content",
+          image: "images/page/lambo.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+      ]}
+    />
+
+    <VideoBlockChapters
+      backgroundImage="images/page/vw-bug.jpg"
+      backgroundColor="#5b5b68"
+      classes="bg-contain bg-center bg-no-repeat"
+      fullVideo="https://www.youtube.com/watch?v=dAlRXC19hmE"
+      chapters={[
+        {
+          video:
+            "https://www.youtube.com/embed/dAlRXC19hmE?si=NNYDt7ytJLLWPC6a",
+          thumbnail: "images/page/hellcat.jpg",
+          alt: "ImageAlt",
+        },
+        {
+          video:
+            "https://www.youtube.com/embed/dAlRXC19hmE?si=NNYDt7ytJLLWPC6a",
+          thumbnail: "images/page/hellcat.jpg",
+          alt: "ImageAlt",
+        },
+        {
+          video:
+            "https://www.youtube.com/embed/dAlRXC19hmE?si=NNYDt7ytJLLWPC6a",
+          thumbnail: "images/page/lambo.jpg",
+          alt: "ImageAlt",
+        },
+      ]}
+    >
+      <div
+        class="p-4 mt-4 text-center px-[8%] md:px-[20%] text-white"
+        slot="middle"
+      >
+        <p>Optionally add some html content here: slot="middle"</p>
+      </div>
+    </VideoBlockChapters>
+
+    <VideoScrollBlockImages
+      desktopImages={[
+        "images/page/hellcat.jpg",
+        "images/page/lambo.jpg",
+        "images/page/hellcat.jpg",
+        "images/page/lambo.jpg",
+        "images/page/hellcat.jpg",
+        "images/page/lambo.jpg",
+      ]}
+      mobileImage="images/page/vw-bug.jpg"
+      containerHeightAdjuster={2}
+    />
+
+    <RelatedArticles
+      title="More from Drive"
+      articles={[
+        {
+          title: "Article Title",
+          image: "images/page/hellcat.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          image: "images/page/lambo.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+        {
+          title: "Article Title",
+          image: "images/page/vw-bug.jpg",
+          imageAlt: "Image Alt",
+          link: "https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios",
+        },
+      ]}
+    />
+
+    <StickyCTA
+      backgroundColor="#fff"
+      linkText="Book a test drive"
+      linkUrl="https://www.drive.com.au/?utm_source=drive_home&utm_medium=textlink&utm_campaign=drive_brandstudios"
+      logo="images/Drive_BrandStudios_Logo.webp"
+      logoAlt="Mazda Logo"
+      buttonColor="black"
+      buttonTextColor="#fff"
+    />
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: auto;
+    width: 100%;
+    color: white;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  .astro-a {
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translatex(-50%);
+    width: 220px;
+    height: auto;
+    z-index: -1;
+  }
+  h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 1em;
+  }
+  .text-gradient {
+    background-image: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 400%;
+    background-position: 0%;
+  }
+  .instructions {
+    margin-bottom: 2rem;
+    border: 1px solid rgba(var(--accent-light), 25%);
+    background: linear-gradient(
+      rgba(var(--accent-dark), 66%),
+      rgba(var(--accent-dark), 33%)
+    );
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+  .instructions code {
+    font-size: 0.8em;
+    font-weight: bold;
+    background: rgba(var(--accent-light), 12%);
+    color: rgb(var(--accent-light));
+    border-radius: 4px;
+    padding: 0.3em 0.4em;
+  }
+  .instructions strong {
+    color: rgb(var(--accent-light));
+  }
+  .link-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
+    gap: 2rem;
+    padding: 0;
+  }
+  .drive-hotspot-carousel .flickity-viewport {
+    height: 30rem;
+    width: 100%;
+  }
+</style>

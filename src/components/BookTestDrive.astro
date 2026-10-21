@@ -1,0 +1,70 @@
+---
+interface Props {
+  backgroundColor?: string;
+  logo: string;
+  logoAlt: string;
+  linkText: string;
+  linkUrl: string;
+  buttonColor?: string;
+  buttonTextColor?: string;
+  tracking?: string;
+}
+const {
+  backgroundColor,
+  logo,
+  logoAlt,
+  linkText,
+  linkUrl,
+  buttonColor = "#000000",
+  buttonTextColor = "#ffffff",
+  tracking,
+}: Props = Astro.props;
+
+import RightArrow from "../../public/images/ui/icon-cta-square-arrow.svg?raw";
+import { plausibleClass } from "../helpers";
+---
+
+<div
+  class="py-10 flex mx-auto px-[10%] flex-row"
+  style={`background-color: ${backgroundColor};`}
+>
+  <div class="w-full md:w-1/2 flex justify-start py-4 md:py-0">
+    <div class="w-full md:w-1/2 h-full flex items-center justify-center md:justify-start">
+      <img src={logo} alt={logoAlt} class="max-h-40" />
+    </div>
+  </div>
+  <div
+    class="w-full md:w-1/2 flex justify-center md:justify-end items-center drive-button py-4 md:py-0"
+  >
+    <a
+      class={`flex justify-center items-center text-sm md:text-base mr-2 md:mr-0 pl-3 pr-1.5 py-1.5 md:pl-6 md:pr-3 md:py-3 rounded-md ${plausibleClass(tracking)}`}
+      style={`background-color: ${buttonColor}; color: ${buttonTextColor};`}
+      href={linkUrl}
+      target="_blank"
+      rel="nofollow"
+    >
+      {linkText}
+      <Fragment set:html={RightArrow} />
+    </a>
+  </div>
+</div>
+
+<style is:global define:vars={{ buttonColor, buttonTextColor }}>
+  .drive-button > a > svg {
+    height: 2rem;
+    width: 2rem;
+    margin-left: 0.5rem;
+    fill: var(--buttonColor);
+  }
+  .drive-button > a > svg > g > #Rectangle_91 {
+    fill: var(--buttonTextColor);
+    stroke: var(--buttonColor);
+  }
+  @media screen and (min-width: 768px) {
+    .drive-button > a > svg {
+      height: 3rem;
+      width: 3rem;
+      margin-left: 1rem;
+    }
+  }
+</style>

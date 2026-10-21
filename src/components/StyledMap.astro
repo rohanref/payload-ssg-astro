@@ -1,0 +1,386 @@
+---
+interface Props {
+  tracking?: string;
+}
+
+const { tracking }: Props = Astro.props;
+import { plausibleClass } from "../helpers";
+---
+
+<script>
+  import { Loader } from "@googlemaps/js-api-loader";
+  const loader = new Loader({
+    apiKey: "AIzaSyDa6T1_8Fz0KbSgB_F8VhKyJ_wqcps_HAk",
+    version: "weekly",
+  });
+
+  const waypoints = [
+    "Flinders, Victoria 3929",
+    "540 C789, Arthurs Seat VIC 3936",
+    "Laneway Espresso, 167 Point Nepean Rd, Dromana VIC 3936",
+    "Montalto, 33 Shoreham Rd, Red Hill South VIC 3937",
+  ];
+
+  const styledMapType = [
+    {
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#ebe3cd",
+        },
+      ],
+    },
+    {
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#523735",
+        },
+      ],
+    },
+    {
+      elementType: "labels.text.stroke",
+      stylers: [
+        {
+          color: "#f9e5dc",
+        },
+      ],
+    },
+    {
+      featureType: "administrative",
+      elementType: "geometry.stroke",
+      stylers: [
+        {
+          color: "#f2f2f2",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.land_parcel",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.land_parcel",
+      elementType: "geometry.stroke",
+      stylers: [
+        {
+          color: "#e9cfc3",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.land_parcel",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#ae9e90",
+        },
+      ],
+    },
+    {
+      featureType: "administrative.neighborhood",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "landscape.natural",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#e8cfc3",
+        },
+      ],
+    },
+    {
+      featureType: "poi",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#dfd2ae",
+        },
+      ],
+    },
+    {
+      featureType: "poi",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#93817c",
+        },
+      ],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "geometry.fill",
+      stylers: [
+        {
+          color: "#f8e5dc",
+        },
+      ],
+    },
+    {
+      featureType: "poi.park",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#755b59",
+        },
+      ],
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#cdb4ae",
+        },
+        {
+          visibility: "on",
+        },
+      ],
+    },
+    {
+      featureType: "road",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#f9e5dc",
+        },
+      ],
+    },
+    {
+      featureType: "road.arterial",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#d4c7ab",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry.stroke",
+      stylers: [
+        {
+          color: "#d1b5a6",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway",
+      elementType: "labels",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway.controlled_access",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#e98d58",
+        },
+      ],
+    },
+    {
+      featureType: "road.highway.controlled_access",
+      elementType: "geometry.stroke",
+      stylers: [
+        {
+          color: "#c99b83",
+        },
+      ],
+    },
+    {
+      featureType: "road.local",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "road.local",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#806b63",
+        },
+      ],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#f8e5db",
+        },
+        {
+          weight: 1,
+        },
+      ],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "geometry.fill",
+      stylers: [
+        {
+          color: "#c9c9c9",
+        },
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#8f7d77",
+        },
+      ],
+    },
+    {
+      featureType: "transit.line",
+      elementType: "labels.text.stroke",
+      stylers: [
+        {
+          color: "#ebe3cd",
+        },
+      ],
+    },
+    {
+      featureType: "transit.station",
+      elementType: "geometry",
+      stylers: [
+        {
+          color: "#dfd2ae",
+        },
+      ],
+    },
+    {
+      featureType: "water",
+      elementType: "geometry.fill",
+      stylers: [
+        {
+          color: "#bbcbd1",
+        },
+      ],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+    {
+      featureType: "water",
+      elementType: "labels.text.fill",
+      stylers: [
+        {
+          color: "#92998d",
+        },
+      ],
+    },
+    // Remove the waypoint icons
+    {
+      featureType: "poi",
+      elementType: "all",
+      stylers: [
+        {
+          visibility: "off",
+        },
+      ],
+    },
+  ];
+
+  const location = { lat: -38.335319278302435, lng: 144.93334459429815 };
+
+  let map;
+  loader.load().then(async () => {
+    const { Map } = await google.maps.importLibrary("maps");
+
+    map = new Map(document.getElementById("map"), {
+      center: location,
+      zoom: 11,
+      styles: styledMapType,
+      disableDefaultUI: true,
+      directionsService: true,
+    });
+
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({
+      map,
+      suppressInfoWindows: true,
+      suppressMarkers: true,
+      polylineOptions: {
+        strokeColor: "#dd525d",
+        strokeOpacity: 1,
+        strokeWeight: 6,
+      },
+    });
+    directionsRenderer.setMap(map);
+
+    const request = {
+      origin: waypoints[0],
+      destination: waypoints[waypoints.length - 1],
+      waypoints: waypoints
+        .slice(1, waypoints.length - 1)
+        .map((waypoint) => ({ location: waypoint })),
+      travelMode: google.maps.TravelMode.DRIVING,
+      // remove extraneous waypoints
+    };
+
+    directionsService.route(request, function (result, status) {
+      if (status == "OK") {
+        directionsRenderer.setDirections(result);
+      }
+    });
+  });
+</script>
+
+<div id="map" class={plausibleClass(tracking)}></div>
+
+<style is:global>
+  #map img {
+    opacity: 1 !important;
+    /* The map control icons will be off */
+    transform: translateX(0) !important;
+  }
+
+  #map {
+    height: 600px !important;
+    width: 100% !important;
+  }
+</style>

@@ -1,0 +1,169 @@
+---
+interface Props {
+  desktopImages: string[];  // Array of image paths for desktop view
+  mobileImage: string;      // Path for the mobile-only image
+  containerHeightAdjuster: number;  // Divider number to adjust the container height
+  speedFactor: number; // Animation speed multiplier
+}
+
+const {
+  desktopImages = [],
+  mobileImage = '',
+  containerHeightAdjuster = 1, // Default to 1 if no adjuster is passed
+  speedFactor = 8, // Default to 8 if no adjuster is passed
+}: Props = Astro.props;
+---
+
+<!-- Image container for desktop -->
+<div id="image-container" data-images={JSON.stringify(desktopImages)} data-container-adjuster={containerHeightAdjuster} data-speed-factor={speedFactor} class="bg-black">
+  <div class="image-wrapper">
+    <!-- Load first image directly (this will be visible initially) -->
+    <img 
+      src={desktopImages[0]} 
+      class="image-slide active" 
+      alt="Frame 1" 
+    />
+  </div>
+</div>
+
+<!-- Mobile-only images (displayed on small screens) -->
+<div id="mobile-only" style="display:none;">
+  <img src={mobileImage} alt="Mobile image" />
+</div> 
+
+<style is:inline>
+  #image-container {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    position: relative;
+    z-index:2;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .image-wrapper {
+    display: flex;
+    position: relative;
+    width: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  .image-wrapper.fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  .image-slide {
+    width: 100%;
+    object-fit: cover; /* Adjust to fill the viewport */
+    opacity: 0; /* Start all images invisible */
+    position: absolute;
+    transition: none;
+    transform: none;
+  }
+
+  .image-slide.active {
+    opacity: 1;
+  }
+
+  .image-wrapper:after {
+    content: "";
+    display: block;
+    background: linear-gradient(180deg, transparent 0%, #000 100%);
+    width: 100%;
+    height: 100px;
+    position: absolute;
+    bottom: -1px;
+  }
+</style>
+
+<script>
+  // Retrieve the `desktopImages` and the number of images dynamically
+  const imageContainer = document.getElementById('image-container');
+  const images = JSON.parse(imageContainer.getAttribute('data-images')); // Parse the images array from data attribute
+  // Retrieve the container height adjuster and speed factor passed as props
+  const containerHeightAdjuster = parseFloat(imageContainer.getAttribute('data-container-adjuster'));
+  const speedFactor = parseFloat(imageContainer.getAttribute('data-speed-factor'));
+
+  const imageWrapper = document.querySelector('.image-wrapper');
+  const totalImages = images.length;
+
+  if (window.innerWidth > 768) {
+    // Desktop logic - Load images dynamically
+    function loadImages() {
+      // Start from the second image (index 1) as the first image is already loaded
+      images.slice(1).forEach((imageSrc, index) => {
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.classList.add('image-slide');
+        img.alt = `Frame ${index + 2}`;  // Index starts from 2 because we're skipping the first image
+        imageWrapper.appendChild(img);
+      });
+    }
+
+    function setContainerHeight() {
+      // Calculate container height based on image height and adjustment factor
+      const imageHeightElement = document.querySelector('.image-slide');
+      const imageHeight = imageHeightElement ? imageHeightElement.height : 0;  // Use the height of the first image
+      const totalImages = images.length;
+      const baseHeight = (totalImages - 1) * imageHeight;
+      const finalHeight = baseHeight / containerHeightAdjuster;
+
+      // Set the container height dynamically (this is the total scrollable height)
+      imageContainer.style.height = `${finalHeight}px`;
+      // Set the wrapper height dynamically based on the first image
+      imageWrapper.style.height = `${imageHeight}px`;  // Set the wrapper height based on the first image's height
+    }
+
+
+
+
+
+    // Function to handle scroll
+    function handleScroll() {
+      const containerRect = imageContainer.getBoundingClientRect();
+      const containerTop = containerRect.top;
+
+      // Check if the container has reached the top of the viewport
+      if (containerTop <= 0) {
+        // Once it does fix the image wrapper
+        imageWrapper.classList.add('fixed'); 
+        const scrollPosition = window.scrollY;
+        const scrollRatio = (scrollPosition - imageContainer.offsetTop) / (document.documentElement.scrollHeight - window.innerHeight);
+        // Scale the scroll ratio to speed up the frame transitions
+        const scaledScrollRatio = scrollRatio * speedFactor;
+        // Determine the frame index based on the scaled scroll ratio
+        const frameIndex = Math.min(Math.floor(scaledScrollRatio * totalImages), totalImages - 1);
+        // Update image opacity based on scroll position
+        document.querySelectorAll('.image-wrapper .image-slide').forEach((img, index) => {
+          if (index === frameIndex) {
+            img.classList.add('active');
+          } else {
+            img.classList.remove('active');
+          }
+        });
+      } else {
+        imageWrapper.classList.remove('fixed'); // Remove fixed position when out of viewport
+      }
+    }
+
+    // Event listeners for scroll and resize
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', setContainerHeight);
+
+    // Initialize and load the images (large screens only)
+    window.addEventListener('load', () => {
+      loadImages();
+      setContainerHeight();
+      handleScroll();
+    });
+  } else {
+    // For mobile, show the mobile image
+    const mobileImageElement = document.getElementById('mobile-only');
+    if (mobileImageElement) {
+      mobileImageElement.style.display = 'block';
+    }
+  }
+</script>

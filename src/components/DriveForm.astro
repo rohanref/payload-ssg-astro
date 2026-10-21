@@ -1,0 +1,380 @@
+---
+interface Props {
+  vendorId?: string;
+  dryRun?: boolean;
+}
+
+const {
+  vendorId = "drive",
+  dryRun = true,
+} = Astro.props;
+
+const apiUrl = "https://dev-api.drivemustang.com.au/forms/submit";
+const endpoint = dryRun ? `${apiUrl}?dryRun=1` : apiUrl;
+const turnstileSitekey = "YOUR_TURNSTILE_SITEKEY";
+---
+
+<form
+  class="drive-form mx-auto grid w-full max-w-lg gap-5 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+  data-endpoint={endpoint}
+  data-vendor-id={vendorId}
+  data-sitekey={turnstileSitekey}
+>
+  <div class="grid gap-1.5">
+    <label for="drive-name" class="text-sm font-medium text-gray-700">
+      First name
+    </label>
+    <input
+      id="drive-name"
+      name="name"
+      type="text"
+      autocomplete="given-name"
+      class="w-full rounded-md border border-gray-300 px-3 py-2.5 text-gray-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+    />
+  </div>
+
+  <div class="grid gap-1.5">
+    <label for="drive-surname" class="text-sm font-medium text-gray-700">
+      Surname
+    </label>
+    <input
+      id="drive-surname"
+      name="surname"
+      type="text"
+      autocomplete="family-name"
+      class="w-full rounded-md border border-gray-300 px-3 py-2.5 text-gray-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+    />
+  </div>
+
+  <div class="grid gap-1.5">
+    <label for="drive-email" class="text-sm font-medium text-gray-700">
+      Email address <span class="text-red-600">*</span>
+    </label>
+    <input
+      id="drive-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      required
+      class="w-full rounded-md border border-gray-300 px-3 py-2.5 text-gray-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+    />
+  </div>
+
+  <div class="grid gap-1.5">
+    <label for="drive-mobile" class="text-sm font-medium text-gray-700">
+      Mobile
+    </label>
+    <input
+      id="drive-mobile"
+      name="mobile"
+      type="tel"
+      autocomplete="tel"
+      class="w-full rounded-md border border-gray-300 px-3 py-2.5 text-gray-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+    />
+  </div>
+
+  <div class="grid gap-1.5">
+    <label for="drive-vehicle" class="text-sm font-medium text-gray-700">
+      Vehicle of interest
+    </label>
+    <select
+      id="drive-vehicle"
+      name="ca_string_1"
+      class="w-full rounded-md border border-gray-300 bg-white px-3 py-2.5 text-gray-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+    >
+      <option value="">Please select</option>
+      <option value="SUV">SUV</option>
+      <option value="UTE">UTE</option>
+      <option value="Sports">Sports</option>
+    </select>
+  </div>
+
+  <label class="flex items-start gap-3 text-sm leading-5 text-gray-600">
+    <input
+      type="checkbox"
+      name="email_optin"
+      value="true"
+      class="mt-1 size-4 shrink-0 rounded border-gray-300 accent-blue-700"
+    />
+    <span>I'd like to receive marketing emails.</span>
+  </label>
+
+  <div class="turnstile-container" aria-hidden="true"></div>
+
+  <button
+    type="submit"
+    class="inline-flex w-full items-center justify-center rounded-md bg-blue-950 px-5 py-3 font-semibold text-white transition hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+  >
+    Submit enquiry
+  </button>
+
+  <p
+    class="form-status text-sm text-gray-700"
+    role="status"
+    aria-live="polite"
+  ></p>
+
+  <details class="rounded-md border border-gray-200 p-3">
+    <summary class="cursor-pointer text-sm font-medium text-gray-700">
+      API response
+    </summary>
+    <pre class="api-response mt-3 overflow-x-auto whitespace-pre-wrap break-words text-xs text-gray-600"></pre>
+  </details>
+</form>
+
+<script>
+  interface TurnstileApi {
+  render: (
+    container: HTMLElement,
+    options: {
+      sitekey: string;
+      execution: "execute";
+      callback: (token: string) => void;
+      "error-callback": () => void;
+      "timeout-callback": () => void;
+    }
+  ) => string;
+  execute: (widgetId: string) => void;
+  reset: (widgetId: string) => void;
+}
+
+declare global {
+  interface Window {
+    turnstile?: TurnstileApi;
+  }
+}
+
+const loadTurnstile = (): Promise<TurnstileApi> => {
+  if (window.turnstile) {
+    return Promise.resolve(window.turnstile);
+  }
+
+  return new Promise((resolve, reject) => {
+    let script = document.querySelector<HTMLScriptElement>(
+      'script[data-turnstile-script]'
+    );
+
+    if (!script) {
+      script = document.createElement("script");
+      script.src =
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.dataset.turnstileScript = "true";
+      document.head.appendChild(script);
+    }
+
+    script.addEventListener("load", () => {
+      if (window.turnstile) {
+        resolve(window.turnstile);
+      } else {
+        reject(new Error("Turnstile failed to initialize."));
+      }
+    }, { once: true });
+
+    script.addEventListener("error", () => {
+      reject(new Error("Unable to load Cloudflare Turnstile."));
+    }, { once: true });
+
+    // Handle a script that loaded before this listener was attached.
+    if (window.turnstile) {
+      resolve(window.turnstile);
+    }
+  });
+};
+
+document
+  .querySelectorAll(".drive-form:not([data-initialized])")
+  .forEach((element) => {
+    if (!(element instanceof HTMLFormElement)) return;
+
+    const form = element;
+    form.dataset.initialized = "true";
+
+    const status = form.querySelector(".form-status");
+    const responseOutput = form.querySelector(".api-response");
+    const submitButton = form.querySelector<HTMLButtonElement>(
+      'button[type="submit"]'
+    );
+    const turnstileContainer = form.querySelector<HTMLElement>(
+      ".turnstile-container"
+    );
+
+    if (
+      !(status instanceof HTMLElement) ||
+      !(responseOutput instanceof HTMLElement) ||
+      !submitButton
+    ) return;
+
+    const endpoint = form.dataset.endpoint ?? "";
+    const isDryRun = endpoint.includes("dryRun=1");
+
+    let turnstile: TurnstileApi | undefined;
+    let widgetId: string | undefined;
+    let isSubmitting = false;
+
+    // Dry runs do not need a widget or token.
+    const initializeTurnstile = async () => {
+      if (isDryRun || widgetId) return;
+
+      if (!turnstileContainer) {
+        throw new Error("Turnstile container is missing.");
+      }
+
+      const sitekey = form.dataset.sitekey;
+
+      if (!sitekey || sitekey === "YOUR_TURNSTILE_SITEKEY") {
+        throw new Error("Configure your Turnstile sitekey.");
+      }
+
+      turnstile = await loadTurnstile();
+
+      widgetId = turnstile.render(turnstileContainer, {
+        sitekey,
+        execution: "execute",
+
+        callback: (token: string) => {
+          // The request is sent only after Turnstile returns a token.
+          void submitPayload(token);
+        },
+
+        "error-callback": () => {
+          status.textContent =
+            "Security verification failed. Please try again.";
+          resetTurnstile();
+          isSubmitting = false;
+          submitButton.disabled = false;
+        },
+
+        "timeout-callback": () => {
+          status.textContent =
+            "Security verification timed out. Please try again.";
+          resetTurnstile();
+          isSubmitting = false;
+          submitButton.disabled = false;
+        },
+      });
+    };
+
+    const resetTurnstile = () => {
+      if (turnstile && widgetId) {
+        turnstile.reset(widgetId);
+      }
+    };
+
+    const submitPayload = async (token?: string) => {
+      const formData = new FormData(form);
+      const getValue = (name: string) =>
+        String(formData.get(name) ?? "").trim();
+
+      const email = getValue("email");
+
+      const payload = {
+        // vendorId: form.dataset.vendorId ?? "drive",
+        email,
+        ...(getValue("name") && { name: getValue("name") }),
+        ...(getValue("surname") && {
+          surname: getValue("surname"),
+        }),
+        ...(getValue("mobile") && {
+          mobile: getValue("mobile"),
+        }),
+        ...(getValue("ca_string_1") && {
+          ca_string_1: getValue("ca_string_1"),
+        }),
+        email_optin: formData.has("email_optin"),
+        // Include the token only on real submissions.
+        ...(!isDryRun && token
+          ? { turnstileToken: token }
+          : {}),
+      };
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+
+        responseOutput.textContent = JSON.stringify(
+          result,
+          null,
+          2
+        );
+
+        if (!response.ok || result.success !== true) {
+          status.textContent =
+            result.message ||
+            `Submission failed (${response.status}).`;
+          return;
+        }
+
+        status.textContent = isDryRun
+          ? "Dry run successful."
+          : "Your enquiry has been submitted successfully.";
+      } catch (error) {
+        console.error("Drive form submission failed:", error);
+        status.textContent =
+          "Unable to submit. Please try again.";
+      } finally {
+        // Every real submission attempt must use a fresh token.
+        if (!isDryRun) {
+          resetTurnstile();
+        }
+
+        isSubmitting = false;
+        submitButton.disabled = false;
+      }
+    };
+
+    // Render the invisible widget when the form initializes.
+    // If loading fails, the next submission can retry initialization.
+    if (!isDryRun) {
+      void initializeTurnstile().catch((error) => {
+        console.error("Turnstile initialization failed:", error);
+      });
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      // Prevent duplicate submissions while verification or fetch is pending.
+      if (isSubmitting) return;
+
+      // Preserve browser validation for required fields and email format.
+      if (!form.reportValidity()) return;
+
+      isSubmitting = true;
+      submitButton.disabled = true;
+      status.textContent = "Submitting...";
+      responseOutput.textContent = "";
+
+      if (isDryRun) {
+        await submitPayload();
+        return;
+      }
+
+      try {
+        await initializeTurnstile();
+
+        if (!turnstile || !widgetId) {
+          throw new Error("Turnstile is not ready.");
+        }
+
+        // Generate a fresh token only after the visitor submits.
+        turnstile.execute(widgetId);
+      } catch (error) {
+        console.error("Turnstile verification setup failed:", error);
+        status.textContent =
+          "Unable to start security verification. Please try again.";
+        resetTurnstile();
+        isSubmitting = false;
+        submitButton.disabled = false;
+      }
+    });
+  });
+</script>

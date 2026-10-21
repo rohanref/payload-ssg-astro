@@ -1,0 +1,68 @@
+---
+interface Props {
+  title: string;
+  slug: string;
+  contentHTML?: string;
+  metaTitle?: string | null;
+  metaImage?: string | null;
+  metaDescription?: string | null;
+}
+
+const {
+  title,
+  slug,
+  contentHTML,
+  metaTitle,
+  metaImage,
+  metaDescription,
+} = Astro.props;
+---
+
+<main class="flex min-h-screen flex-col items-center bg-black p-8 text-white">
+  <h1 class="text-3xl font-bold">{title}</h1>
+
+  <p class="text-xs">Slug: {slug}</p>
+
+  {contentHTML && (
+    <article class="w-full max-w-2xl">
+      <div set:html={contentHTML} />
+    </article>
+  )}
+
+  <section
+    class="mt-10 w-full max-w-2xl space-y-4 border-t border-gray-700 pt-6"
+  >
+    <h2 class="text-2xl font-bold">SEO Preview</h2>
+
+    <div>
+      <h3 class="text-sm font-semibold text-gray-400">Meta Title</h3>
+      <p>{metaTitle || "Not set"}</p>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-semibold text-gray-400">
+        Meta Description
+      </h3>
+      <p class="whitespace-pre-wrap">
+        {metaDescription || "Not set"}
+      </p>
+    </div>
+
+    <div>
+      <h3 class="text-sm font-semibold text-gray-400">Meta Image</h3>
+
+      {metaImage ? (
+        <div class="space-y-2">
+          <img
+            src={metaImage}
+            alt={metaTitle || title}
+            class="h-auto max-w-full rounded-lg"
+          />
+          <p class="break-all text-xs text-gray-400">{metaImage}</p>
+        </div>
+      ) : (
+        <p>Not set</p>
+      )}
+    </div>
+  </section>
+</main>

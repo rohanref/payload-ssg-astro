@@ -1,0 +1,123 @@
+---
+---
+<section class="horizontal-wrapper">
+  <div class="camera">
+    <!-- Countdown overlay -->
+    <div class="countdown" id="countdown">6</div>
+
+    <div class="horizontal-scroll">
+      <div class="item w-[100vw]" style="background: #f28b82;">Item 1</div>
+      <div class="item w-[33.33vw]" style="background: #fbbc04;">Item 2</div>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const wrapper = document.querySelector(".horizontal-wrapper");
+    const scrollContainer = document.querySelector(".horizontal-scroll");
+    const countdownEl = document.getElementById("countdown");
+
+    let isEnabled = window.innerWidth > 640;
+
+    function setupScrollEffect() {
+      if (!isEnabled) {
+        wrapper.style.height = "auto";
+        scrollContainer.style.transform = "none";
+        countdownEl.textContent = "";
+        return;
+      }
+
+      const totalScrollWidth = scrollContainer.scrollWidth;
+      const viewportHeight = window.innerHeight;
+
+      const scrollHeight =
+        totalScrollWidth - window.innerWidth + viewportHeight * 2;
+      wrapper.style.height = `${scrollHeight}px`;
+
+      window.addEventListener("scroll", onScroll);
+    }
+
+    function onScroll() {
+      if (!isEnabled) return;
+
+      const scrollTop = window.scrollY;
+      const wrapperOffsetTop = wrapper.offsetTop;
+      const totalScrollWidth = scrollContainer.scrollWidth;
+      const maxTranslateX = totalScrollWidth - window.innerWidth;
+      const distanceScrolled = scrollTop - wrapperOffsetTop;
+
+      if (
+        scrollTop >= wrapperOffsetTop &&
+        scrollTop <= wrapperOffsetTop + wrapper.offsetHeight
+      ) {
+        const translateX = Math.min(Math.max(distanceScrolled, 0), maxTranslateX);
+        scrollContainer.style.transform = `translateX(-${translateX}px)`;
+
+        const progress = Math.min(Math.max(translateX / maxTranslateX, 0), 1);
+        const countdownValue = (6 - progress * 6).toFixed(0);
+        countdownEl.textContent = countdownValue;
+
+        const colorValue = Math.floor(255 * (1 - progress));
+        const color = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
+        countdownEl.style.setProperty("--countdown-color", color);
+      }
+    }
+
+    // Set up initially
+    setupScrollEffect();
+
+    // Recalculate on resize
+    window.addEventListener("resize", () => {
+      isEnabled = window.innerWidth > 640;
+      window.removeEventListener("scroll", onScroll);
+      setupScrollEffect();
+    });
+  });
+</script>
+
+
+<style>
+  @media (min-width:641px){
+    .horizontal-wrapper {
+      position: relative;
+      height: 300vh;
+    }
+
+    .camera {
+      position: sticky;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .horizontal-scroll {
+      height: 100vh;
+      display: flex;
+      width: max-content;
+      will-change: transform;
+    }
+
+    .countdown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      color: var(--countdown-color, white);
+      font-size: 100vh;
+      z-index: 10;
+      pointer-events: none;
+      font-family: sans-serif;
+      transition: color 0.2s linear;
+    }
+  }
+  .item {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      user-select: none;
+    }
+</style>

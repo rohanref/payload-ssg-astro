@@ -1,0 +1,114 @@
+---
+interface Props {
+  image: string;
+  title?: string;
+  textPosition?:
+    | "top-left"
+    | "top-center"
+    | "top-right"
+    | "center-left"
+    | "center-center"
+    | "center-right"
+    | "bottom-left"
+    | "bottom-center"
+    | "bottom-right";
+  style?: string;
+  backgroundPosition?: string;
+  parallax?: boolean;
+  parallaxSpeed?: number;
+  containerStyle?: string;
+  zoom?: number;
+}
+
+const {
+  image,
+  title,
+  style = "",
+  textPosition,
+  backgroundPosition = "center",
+  parallax = false,
+  parallaxSpeed = 0.5,
+  containerStyle = "",
+  zoom = 120,
+}: Props = Astro.props;
+
+const position = (pos: string) => {
+  switch (pos) {
+    case "top-left":
+      return "items-start justify-start";
+    case "top-center":
+      return "items-start justify-center";
+    case "top-right":
+      return "items-start justify-end";
+    case "center-left":
+      return "items-center justify-start";
+    case "center-center":
+      return "items-center justify-center";
+    case "center-right":
+      return "items-center justify-end";
+    case "bottom-left":
+      return "items-end justify-start";
+    case "bottom-center":
+      return "items-end justify-center";
+    case "bottom-right":
+      return "items-end justify-end";
+    default:
+      return "items-start justify-start";
+  }
+};
+
+const randomId = Math.random().toString(36).substring(7);
+---
+
+<div
+  style={`background-image: url(${image}); background-position: ${backgroundPosition}; ${parallax ? 'background-attachment: fixed;':''};`}
+  class={`featImage bg-cover bg-no-repeat bg-${backgroundPosition} ${parallaxSpeed > 0.5 ? 'h-[90vh]':'h-[100vh]'} ${containerStyle} ${parallax && "parallax-img"}`}
+  id={randomId}
+>
+  {
+    title && (
+      <div
+        class={`container mx-auto flex flex-col md:flex-row p-20 h-full ${position(textPosition)}`}
+      >
+        <h1 class={`text-white text-4xl font-bold ${style}`}>{title}</h1>
+      </div>
+    )
+  }
+</div>
+
+{parallax && (
+  <script define:vars={{ randomId, parallax, parallaxSpeed, zoom }}>
+    // parallax effect for randomId
+    if (parallax) {
+      const bgImage = document.getElementById(randomId);
+      window.addEventListener("scroll", () => {
+        const videoTop = bgImage.getBoundingClientRect().top;
+        const videoHeight = bgImage.getBoundingClientRect().height;
+        const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
+        const position = videoTop + videoHeight;
+        const visibility = (windowHeight - position) / videoHeight;
+        // Slightly more than the cover area
+        if (windowHeight > windowWidth) {
+          bgImage.style.backgroundSize = `auto ${zoom}%`;
+        }
+        else {
+          bgImage.style.backgroundSize = `${zoom}% auto`;
+        }     
+        bgImage.style.backgroundPositionY = `${(visibility + 1 ) * parallaxSpeed * 100}%`;
+
+      });
+    }
+  </script>)}
+
+<style>
+  /* IOS background-attachment: fixed; fix */
+  @supports (-webkit-touch-callout: none) {
+    .featImage.parallax-img {
+      background-attachment: scroll !important;
+    }
+  }
+  .featImage {
+    transition: background-position 0s;
+  }
+</style>

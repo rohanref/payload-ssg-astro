@@ -1,0 +1,43 @@
+---
+interface Props {
+    homeLink: string;
+    link: string;
+    linkText: string;
+    tracking?: string;
+}
+
+const { homeLink, link, linkText, tracking }: Props = Astro.props;
+import { plausibleClass } from '../helpers';
+---
+
+<div>
+    <nav
+        id="top"
+        class="flex items-center justify-between flex-wrap bg-black p-4"
+    >
+        <div class="flex items-center flex-shrink-0 text-white mr-6">
+            <!-- Mobile Menu Icon -->
+            <!-- <svg class="w-6 h-6 text-gray-800 dark:text-white mr-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+            </svg> -->
+            <span class="font-semibold text-xl tracking-tight">
+                <a href={homeLink} rel="nofollow">
+                    <img
+                        class="w-48 md:w-56"
+                        src="images/Drive_BrandStudios_Logo.webp"
+                        alt="Drive Brand Studios"
+                    />
+                </a>
+            </span>
+        </div>
+        <div class="block lg:flex lg:items-center lg:w-auto">
+            <div>
+                <a
+                    href={link}
+                    class={`bg-white hover:bg-gray-300 duration-300 inline-block text-sm font-medium px-6 py-3 leading-none rounded text-black lg:mt-0 ${plausibleClass(tracking)}`}
+                    rel="nofollow">{linkText}</a
+                >
+            </div>
+        </div>
+    </nav>
+</div>

@@ -1,0 +1,83 @@
+---
+interface Props {
+  logo?: string;
+  logoStyle?: string;
+  textColour?: string;
+  backgroundColour?: string;
+  tracking?: string;
+  items?: {
+    link: string;
+    icon: string;
+    iconAlt: string;
+    text: string;
+    tracking?: string;
+  }[];
+  animated?: boolean;
+  direction?: 'X' | 'Y';
+}
+const {
+  logo,
+  logoStyle = "w-[120px]",
+  textColour = "#fff",
+  backgroundColour = "#000",
+  tracking,
+  items = [],
+  animated = false,
+  direction = "Y",
+}: Props = Astro.props;
+
+const percent = direction === "X" ? "-100%" : "100%";
+const animatedStyle = animated ? `translate${direction}(${percent})` : `translate${direction}(0%)`;
+
+import { plausibleClass } from "../helpers";
+---
+
+<div
+  id="sticky-cta"
+  class={`fixed bottom-0 left-0 z-50 drop-shadow-lg w-full ${plausibleClass(tracking)}`}
+  style={`background-color:${backgroundColour};color:${textColour};`}
+>
+  <div class="flex justify-between items-center w-full max-sm:pb-4">
+    <div
+      class={`p-3 flex justify-center items-center max-sm:hidden`}
+    >
+      {logo && (
+        <img class={logoStyle} src={logo} alt="logo"/>
+      )}
+    </div>
+    <div class="md:py-2 share-button flex justify-evenly w-full md:w-[40%]">
+      {items.map(item => (
+        <a
+          href={item.link}
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+          class={`p-2 flex flex-col justify-end items-center rounded-md bg-white hover:bg-gray-200 hover:text-gray-600 transition-colors duration-200 ${plausibleClass(item.tracking)}`}
+        >
+        <img src={item.icon} alt={item.iconAlt}>
+        <span class="pt-2 text-center md:text-base text-sm leading-4">{item.text}</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
+
+{animated && (
+<script define:vars={{animatedStyle, direction}}>
+  document.addEventListener("scroll", (e) => {
+    const cta = document.getElementById("sticky-cta");
+    if (cta) {
+      if (window.scrollY > 150) {
+        cta.style.transform = `translate${direction}(0)`;
+      } else {
+        cta.style.transform = animatedStyle;
+      }
+    }
+  });
+</script>
+)}
+<style is:global define:vars={{ textColour, backgroundColour, animatedStyle }}>
+  #sticky-cta {
+    transform: var(--animatedStyle);
+    transition: transform 0.3s;
+  }
+</style>

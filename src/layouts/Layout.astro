@@ -1,0 +1,273 @@
+---
+import TrackingLinks from "../components/TrackingLinks.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  url: string;
+  webpImage?: string;
+  jpegImage?: string;
+  pngImage?: string;
+  GTM: string;
+}
+
+const { title, description, url, webpImage, jpegImage, pngImage, GTM }: Props =
+  Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <!-- OG Meta Tags -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Drive" />
+    {
+      webpImage && (
+        <>
+          <meta property="og:image" content={webpImage} />
+          <meta property="og:image:type" content="image/webp" />
+        </>
+      )
+    }
+    {
+      jpegImage && (
+        <>
+          <meta property="og:image" content={jpegImage} />
+          <meta property="og:image:type" content="image/jpeg" />
+        </>
+      )
+    }
+    {
+      pngImage && (
+        <>
+          <meta property="og:image" content={pngImage} />
+          <meta property="og:image:type" content="image/png" />
+        </>
+      )
+    }
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {
+      webpImage && (
+        <>
+          <meta name="twitter:image" content={webpImage} />
+          <meta name="twitter:image:type" content="image/webp" />
+        </>
+      )
+    }
+    {
+      jpegImage && (
+        <>
+          <meta name="twitter:image" content={jpegImage} />
+          <meta name="twitter:image:type" content="image/jpeg" />
+        </>
+      )
+    }
+    {
+      pngImage && (
+        <>
+          <meta name="twitter:image" content={pngImage} />
+          <meta name="twitter:image:type" content="image/png" />
+        </>
+      )
+    }
+
+    <link rel="shortcut icon" href="favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script
+      defer
+      data-domain="brandedcontent.drive.com.au"
+      src="https://therefinerydesign.com.au/js/script.tagged-events.js"
+    ></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GTM}`}
+    ></script>
+    <script define:vars={{ GTM }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", GTM);
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/flickity@2/dist/flickity.min.css"
+    />
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"
+    ></script>
+    <TrackingLinks />
+  </head>
+  <body>
+    <slot />
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const pObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+              }
+            });
+          },
+          {
+            threshold: 0.1, // Adjust this value based on when you want the animation to start
+          }
+        );
+
+        const pElements = document.querySelectorAll("p:not(.no-effect)");
+        pElements.forEach((el) => {
+          pObserver.observe(el);
+        });
+
+        const imgObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("img-visible");
+              }
+            });
+          },
+          {
+            threshold: 0.1, // Adjust this value based on when you want the animation to start
+          }
+        );
+
+        const images = document.querySelectorAll("img");
+        images.forEach((img) => {
+          imgObserver.observe(img);
+        });
+
+        // Playsible Scroll Tracking
+        var lastPositionName = "";
+        var debounce = null;
+
+        // Scrolling elements into view
+        window.addEventListener("scroll", function () {
+          var ids = [];
+          var names = [];
+
+          // Stop tracking if both arrays are empty
+          if (ids.length === 0 && names.length === 0) return;
+
+          var elements = document.querySelectorAll(ids.join(","));
+          elements.forEach(function (element) {
+            if (
+              element.getBoundingClientRect().top <= window.innerHeight / 2 &&
+              element.getBoundingClientRect().bottom >= window.innerHeight / 2
+            ) {
+              const position = ids.indexOf(`#${element.id}`);
+              // Add plausible event with debounce
+              if (lastPositionName !== names[position] && debounce === null) {
+                plausible(`View ${names[position]}`);
+                lastPositionName = names[position];
+                debounce = setTimeout(function () {
+                  debounce = null;
+                }, 1000);
+              }
+            }
+          });
+        });
+      });
+
+      function scrollToAnchor(selectedAnchor) {
+        document.querySelector(selectedAnchor).scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+      // Only for anchor links
+      document
+        .querySelectorAll('a[href^="#"], #left a, #right a')
+        .forEach((anchor) => {
+          anchor.addEventListener("click", (e) => {
+            e.preventDefault();
+            const selectedAnchor = anchor.getAttribute("href");
+            scrollToAnchor(selectedAnchor);
+          });
+        });
+    </script>
+    <style is:global>
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@100;200;300;400;500;600;700&display=swap");
+
+      :root {
+        --accent: 136, 58, 234;
+        --accent-light: 224, 204, 250;
+        --accent-dark: 49, 10, 101;
+        --accent-gradient: linear-gradient(
+          45deg,
+          rgb(var(--accent)),
+          rgb(var(--accent-light)) 30%,
+          white 60%
+        );
+      }
+
+      html {
+        background: #13151a;
+        background-size: 224px;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "IBM Plex Sans", sans-serif;
+      }
+
+      code {
+        font-family:
+          Menlo,
+          Monaco,
+          Lucida Console,
+          Liberation Mono,
+          DejaVu Sans Mono,
+          Bitstream Vera Sans Mono,
+          Courier New,
+          monospace;
+      }
+      /* Add this to your CSS file */
+      p {
+        font-weight: 300;
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.5s ease-out,
+          transform 0.5s ease-out;
+      }
+      .is-visible {
+        opacity: 1;
+        transform: translateY(0px);
+      }
+      img {
+        opacity: 0;
+        transform: translateX(50px); /* More dramatic effect for images */
+        transition:
+          opacity 0.5s ease-out,
+          transform 0.5s ease-out;
+      }
+      .img-visible {
+        opacity: 1;
+        transform: translateX(0px);
+      }
+
+      #map-canvas {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      img[alt=""],
+      img:not([alt]) {
+        outline: 1px solid red;
+      }
+    </style>
+  </body>
+</html>

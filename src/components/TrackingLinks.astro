@@ -1,0 +1,8 @@
+---
+const isDev = import.meta.env.DEV
+const base = import.meta.env.BASE_URL
+---
+{!isDev && base !== '/' && (
+    <script src="../../common/drive-analytics.js"></script>
+    <script async src="https://cdn.brandmetrics.com/tag/6d50a59e0678491a928b99c84ad66b6f/drive.js"></script>
+)}

@@ -1,0 +1,120 @@
+---
+import Modal from "./Modal.astro";
+import LottieAnimation from "astro-integration-lottie/Lottie.astro";
+---
+
+<div class="relative">
+    <style>
+        .verse-player-embed {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+        }
+        .verse-player-embed iframe,
+        .verse-player-embed object,
+        .verse-player-embed embed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #rotate {
+            width: 30vh;
+            text-align: center;
+            margin: 0 auto;
+            display: block;
+        }
+        #rotate-text {
+            display: block;
+        }
+
+        #video-iframe {
+            display: none;
+        }
+        /* Device rortate */
+        @media (orientation: landscape) {
+            #rotate,
+            #rotate-text {
+                display: none;
+            }
+            #video-iframe {
+                display: block;
+                height: 100%;
+                width: 100%;
+            }
+            main {
+                height: 100%;
+            }
+        }
+
+        /* close button */
+        button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            height: 30px;
+            width: 30px;
+        }
+        button img {
+            opacity: 1 !important;
+            transform: translateX(0) !important;
+            background-color: white;
+            border: 1px solid white;
+            border-radius: 50%;
+        }
+        button:focus {
+            outline: none;
+        }
+    </style>
+    <div class="bg-[#efd9c2] md:px-[10%]">
+        <div class="verse-player-embed hidden md:block">
+            <iframe
+                title="Mazda Interactive Video Showroom"
+                src="https://www.verse.com/stories/65659-mazda-ivb-0324/?embed&sharing=0&chapterprogress=0&hamburger=0&slidegallery=0&playernav=0&cuepoints=0&chapterbuttons=0&questionlist=0&slidearrows=0&autoplay=2"
+                allow="autoplay"
+                frameborder="0"
+                allowfullscreen></iframe>
+        </div>
+        <Modal id="dialog" open="Open modal">
+            <main slot="main">
+                <div id="rotate">
+                    <LottieAnimation
+                        src="images/Lottie_Phone_Rotate.json"
+                        autoplay="visible"
+                    />
+                </div>
+                <iframe
+                    title="Mazda Interactive Video Showroom"
+                    id="video-iframe"
+                    src="https://www.verse.com/stories/65659-mazda-ivb-0324/?embed&sharing=0&chapterprogress=0&hamburger=0&slidegallery=0&playernav=0&cuepoints=0&chapterbuttons=0&questionlist=0&slidearrows=0&autoplay=2"
+                    allow="autoplay"
+                    frameborder="0"
+                    allowfullscreen></iframe>
+                <p id="rotate-text" class="py-5">
+                    To view this video, please rotate your device
+                </p>
+            </main>
+            <button
+                slot="close"
+                onclick="document.getElementById('video-iframe').setAttribute('src', document.getElementById('video-iframe').getAttribute('src'))"
+                ><img src="images/close-button.svg" alt="" /></button
+            >
+        </Modal>
+        <div class="pt-8 pb-0 px-4 text-black flex items-center justify-center text-center">
+            <hr class="w-28 mx-5 border-black border-[1.5px]">
+            <h2 class="text-xl">Partner Content</h2>
+            <hr class="w-28 mx-5 border-black border-[1.5px]">
+        </div>
+        <div class="text-center py-6 px-4">
+            <h2 class="text-black text-2xl font-bold mb-4">
+                Ready to embark on this journey?
+            </h2>
+            <p class="text-2xl md:text-base text-[#cb8337] mb-1">
+                Make a selection on the screen <span class="font-semibold"
+                    >above</span
+                >, and lets explore the Mazda CX-60 and Mazda-CX-90 together.
+            </p>
+        </div>
+    </div>
+</div>

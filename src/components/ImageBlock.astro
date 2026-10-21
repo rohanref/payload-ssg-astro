@@ -1,0 +1,158 @@
+---
+// 50/50 Block with a background image
+
+interface Props {
+  backgroundImage: string;
+  imagePosition: "left" | "right";
+  images: {
+    top: {
+      src: string;
+      alt: string;
+    };
+    bottom: {
+      src: string;
+      alt: string;
+    };
+  };
+  text: {
+    title?: string;
+    subtitle?: string;
+    text?: string[] | string;
+    style?: {
+      title?: string;
+      subtitle?: string;
+      text?: string;
+    };
+  };
+  blur?: boolean;
+  centerText?: boolean;
+  containerStyle?: string;
+}
+
+const {
+  backgroundImage,
+  imagePosition,
+  text,
+  images,
+  blur,
+  centerText,
+  containerStyle = "",
+}: Props = Astro.props;
+---
+
+<!-- TODO - Refactor to use flex and flex reverse -->
+<div
+  class="bg-cover bg-no-repeat bg-center z-40 relative"
+  style={`background-image: url(${backgroundImage});`}
+>
+  <div class={blur ? "backdrop-blur-xl" : ""}>
+    <div class="max-w-[2000px] m-auto">
+      <div
+        class={`container mx-auto flex ${imagePosition === "left" ? "flex-col" : "flex-col-reverse"} md:flex-row ${containerStyle}`}
+      >
+        <div
+          class={`w-full md:w-1/2 flex flex-col ${centerText && imagePosition === "right" ? "justify-center" : ""} ${imagePosition === "left" ? "px-8 justify-between" : "p-8 flex items-center"}`}
+        >
+          {
+            imagePosition === "left" && (
+              <div class="md:flex md:justify-between flex-row md:flex-col md:h-full">
+                <div class="w-full md:mb-[-30px]">
+                  <img
+                    src={images.top.src}
+                    alt={images.top.alt}
+                    class="w-full relative top-[-60px]"
+                  />
+                </div>
+                <div class="w-full mt-[-30px]">
+                  <img
+                    src={images.bottom.src}
+                    alt={images.bottom.alt}
+                    class="w-full md:relative bottom-[-60px]"
+                  />
+                </div>
+              </div>
+            )
+          }
+          {
+            imagePosition === "right" && (
+              <>
+                {text?.title && (
+                  <h2
+                    class={`text-3xl font-bold text-white ${text.style?.title}`}
+                  >
+                    {text.title}
+                  </h2>
+                )}
+                {text?.subtitle && (
+                  <h3
+                    class={`text-xl font-bold text-white ${text.style?.subtitle}`}
+                  >
+                    {text.subtitle}
+                  </h3>
+                )}
+                {Array.isArray(text?.text) &&
+                  text.text.map((par) => (
+                    <p class={`text-white ${text?.style?.text}`}>{par}</p>
+                  ))}
+                {!Array.isArray(text?.text) && text?.text && (
+                  <p class={`text-white ${text.style?.text}`}>{text.text}</p>
+                )}
+              </>
+            )
+          }
+        </div>
+        <div
+          class={`w-full md:w-1/2 flex flex-col ${centerText && imagePosition === "left" ? "justify-center" : ""} ${imagePosition === "right" ? "px-8 justify-between" : "p-8 flex items-center"}`}
+        >
+          {
+            imagePosition === "right" && (
+              <div class="md:flex md:justify-between flex-row md:flex-col md:h-full">
+                <div class="w-full md:mb-[-30px]">
+                  <img
+                    src={images.top.src}
+                    alt={images.top.alt}
+                    class="w-full relative top-[-60px]"
+                  />
+                </div>
+                <div class="w-full mt-[-30px]">
+                  <img
+                    src={images.bottom.src}
+                    alt={images.bottom.alt}
+                    class="w-full md:relative bottom-[-60px]"
+                  />
+                </div>
+              </div>
+            )
+          }
+          {
+            imagePosition === "left" && (
+              <>
+                {text?.title && (
+                  <h2
+                    class={`text-3xl font-bold text-white ${text.style?.title}`}
+                  >
+                    {text.title}
+                  </h2>
+                )}
+                {text?.subtitle && (
+                  <h3
+                    class={`text-xl font-bold text-white ${text.style?.subtitle}`}
+                  >
+                    {text.subtitle}
+                  </h3>
+                )}
+                {Array.isArray(text?.text) &&
+                  text.text.map((par) => (
+                    <p class={`text-white ${text?.style?.text}`}>{par}</p>
+                  ))}
+                {!Array.isArray(text?.text) && text?.text && (
+                  <p class={`text-white ${text.style?.text}`}>{text.text}</p>
+                )}
+              </>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

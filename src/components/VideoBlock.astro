@@ -1,0 +1,95 @@
+---
+interface Props {
+  embed: string;
+  background: string;
+  placeholder?: string;
+  placeholderAlt?: string;
+  overlap?: boolean;
+  tracking?: string;
+}
+
+const { embed, background, placeholder, placeholderAlt, overlap, tracking }: Props =
+  Astro.props;
+---
+
+<div
+  class="p-8 pt-20 bg-contain bg-bottom flex flex-col items-center justify-center relative"
+  style={`background-image: url(${background});`}
+>
+  <!-- Video Element -->
+  <iframe
+    id="featurevideo"
+    class={overlap && "overlap"}
+    style="display: none;"
+    height="640px"
+    width="100%"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen
+    src={embed}
+  >
+  </iframe>
+  <!-- Placeholder Image -->
+  {
+    placeholder && (
+      <img
+        id="videoplaceholder"
+        src={placeholder}
+        alt={placeholderAlt}
+        height="640"
+        width="100%"
+        class={overlap && "overlap"}
+      />
+    )
+  }
+  <slot />
+</div>
+<script define:vars={{ tracking }}>
+  // Plausible Custom Tracking
+  // e.g plausible('Download', {props: {method: 'HTTP', position: 'footer'}})
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const placeholder = document.querySelector("#videoplaceholder");
+
+    if (!placeholder) {
+      return;
+    }
+    placeholder.addEventListener("click", function () {
+      const vid = document.querySelector("iframe#featurevideo");
+      if (vid) {
+        vid.style.display = "block";
+        vid.src.includes("?") ? (vid.src += "&autoplay=1") : (vid.src += "?autoplay=1");
+        placeholder.style.display = "none";
+        // Track when people Click the Video
+        if (tracking) {
+          plausible(tracking);
+        }
+      }
+    });
+  });
+</script>
+
+<style define:vars={{ overlap }}>
+  #featurevideo {
+    display: none;
+    max-width: 1200px !important;
+    max-height: 640px !important;
+    aspect-ratio: 16 / 9;
+  }
+  #videoplaceholder {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 640px;
+    margin: auto;
+  }
+
+  .overlap,
+  #videoplaceholder {
+    transform: translateY(-100px);
+    margin-bottom: -100px;
+  }
+</style>

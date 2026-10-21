@@ -1,0 +1,131 @@
+---
+interface Props {
+  id: string;
+  background: string;
+  placeholder: string;
+}
+
+const { id, background, placeholder }: Props = Astro.props;
+---
+
+<script is:inline src="https://static.kuula.io/api.js"></script>
+<div
+  class="p-8 pt-20 bg-cover bg-bottom"
+  style={`background-image: url(${background});`}
+>
+  <script
+    is:inline
+    define:vars={{ id }}
+    src="https://static.kuula.io/embed.js"
+    data-kuula=`https://kuula.co/share/collection/${id}?logo=1&info=0&logosize=147&fs=0&vr=1&sd=1&thumbs=3&inst=0`
+    data-width="100%"
+    data-height="640px"></script>
+  <!-- Placeholder Image -->
+  {
+    placeholder && (
+      <img
+        id="threesixtyplaceholder"
+        src={placeholder}
+        alt="360 Interactive Element"
+        height="640"
+        width="100%"
+      />
+    )
+  }
+  <slot />
+</div>
+<script>
+  interface Page {
+    frame: number;
+    data: {
+      id: string;
+      description: string;
+      title: string;
+    };
+  }
+
+  // Plausible Custom Tracking
+  // e.g plausible('Download', {props: {method: 'HTTP', position: 'footer'}})
+  const p = (name: string, props: any) => {
+    console.log("Tracked", name, props);
+  };
+
+  KuulaPlayerAPI.addEventListener("postloaded", function (e: Page) {
+    // Click an image to view the 360 tour
+    plausible("360 Tour", {
+      props: {
+        page: e.data.title,
+      },
+    });
+  });
+
+  interface Hotspot {
+    frame: number;
+    data: {
+      name: string | undefined;
+      uid: string;
+    };
+  }
+
+  KuulaPlayerAPI.addEventListener("hotspot", function (e: Hotspot) {
+    // Click a hotspot to view the 360 tour
+    if (e.data.name === undefined) {
+      console.log("Not tracked: Hotspot name is undefined.");
+    } else {
+      plausible("360 Tour", {
+        props: {
+          hotspot: e.data.name,
+        },
+      });
+    }
+  });
+
+  let frame = 0;
+  let id = 0;
+  KuulaPlayerAPI.addEventListener("frameloaded", function (e) {
+    frame = e.frame;
+    id = e.data.posts[0].id;
+    console.log("Frame loaded", e);
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const placeholder = document.querySelector("#threesixtyplaceholder");
+
+    if (!placeholder) {
+      return;
+    }
+    placeholder.addEventListener("click", function () {
+      const iframe = document.querySelector("iframe");
+      if (iframe) {
+        iframe.style.display = "block";
+        placeholder.style.display = "none";
+        KuulaPlayerAPI.load(frame, id);
+        // Track when people start the 360 tour
+        plausible("360 Tour", {
+          props: {
+            page: "Start Tour",
+          },
+        });
+      }
+    });
+  });
+</script>
+
+<style is:inline>
+  iframe[src*="kuula.co"] {
+    display: none;
+    width: 100% !important;
+    max-width: 1200px !important;
+    height: 640px !important;
+    margin: auto !important;
+  }
+  #threesixtyplaceholder {
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 640px;
+    margin: auto;
+  }
+  H
+</style>

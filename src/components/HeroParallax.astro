@@ -1,0 +1,13 @@
+---
+interface Props {
+    desktop: string;
+    tablet?: string;
+    mobile?: string;
+    alt: string;
+}
+
+const { desktop, tablet, mobile, alt }: Props = Astro.props;
+---
+<div class="w-full">
+    <img src={desktop} srcset=`{${ tablet }} 768w, {${ mobile }} 320w` alt={alt} class="w-full" />
+</div>

@@ -1,0 +1,118 @@
+---
+interface Props {
+  backgroundImage: string;
+  title: string;
+  subtitle?: string;
+  contentImage?: string;
+  contentImageAlt?: string;
+  featuredImage?: string;
+  featuredImageAlt?: string;
+  overflow?: boolean;
+  position?: "left" | "right";
+  style?: {
+    title?: string;
+    subtitle?: string;
+  }
+}
+
+const {
+  backgroundImage,
+  title,
+  subtitle,
+  contentImage,
+  contentImageAlt,
+  featuredImage,
+  featuredImageAlt,
+  overflow,
+  position = "left",
+  style = {},
+}: Props = Astro.props;
+
+// Check if subtitle contains html tags and render it as html
+const subtitleHtml = subtitle && subtitle.match(/<[^>]*>/g);
+
+---
+
+<div
+  class={`flex flex-col-reverse ${position === "left" ? "md:flex-row" : "md:flex-row-reverse"} relative w-full`}
+  style={`justify-content: space-between;background-image: url(${backgroundImage});`}
+>
+  <div class="flex flex-col justify-between md:w-[40%]">
+    <div class="md:p-20">
+      <h1 class={`md:text-5xl text-3xl max-md:pl-44 max-md:pr-2 max-md:pt-4 ${style?.title || ''}`}>
+        {title}
+      </h1>
+      {
+        subtitle && (
+          <h2 class={`max-md:py-4 font-thin text-xl max-md:pl-44 max-md:pr-2 max-md:pt-4 ${style?.subtitle || ''}`}>
+            {subtitleHtml ? <Fragment set:html={subtitle} /> : subtitle}
+          </h2>
+        )
+      }
+    </div>
+
+    {
+      contentImage && (
+        <img
+          src={contentImage}
+          alt={contentImageAlt}
+          class={overflow ? "featured-image-overflow" : "px-20"}
+        />
+      )
+    }
+  </div>
+  <div class="md:w-[60%]">
+    <img
+      src={featuredImage}
+      alt={featuredImageAlt}
+      alt="Background Image"
+      class="w-full h-full object-cover"
+    />
+  </div>
+</div>
+
+<style>
+  @media screen and (min-width: 768px) {
+    .featured-image-overflow {
+      position: relative !important;
+      transform: translate(40px, 40px) !important;
+      top: unset !important;
+      bottom: unset !important;
+      right: unset !important;
+      left: unset !important;
+      height: unset !important;
+      width: unset !important;
+    }
+  }
+  /* 
+  @media screen and (min-width: 1024px){
+    .featured-image-overflow {
+      height: 300px !important;
+      width: 347px !important;
+    }
+  }
+
+  @media screen and (min-width: 1280px){
+    .featured-image-overflow {
+      height: 500px !important;
+      width: 578px !important;
+    }
+  }
+  
+  @media screen and (min-width: 1600px){
+    .featured-image-overflow {
+      height: unset !important;
+      width: unset !important;
+    }
+  } */
+
+  .featured-image-overflow {
+    /* margin-top: -100px; */
+    position: absolute;
+    bottom: 100px;
+    left: 0;
+    z-index: 1;
+    height: 150px;
+    width: 150px;
+  }
+</style>
