@@ -21,6 +21,8 @@ import Parallax from "../components/Parallax.astro";
 import AnimatedTextSection from "../components/AnimatedTextSection.astro";
 import DriveForm from "../components/DriveForm.astro";
 import PageContent from "../components/PageContent.astro";
+import SimpleContent from "../components/SimpleContent.astro";
+import ImageTextBackground from "../components/ImageTextBackground.astro";
 
 // Old Components
 import DriveHero from "../old-components/DriveHero.astro";
@@ -59,13 +61,38 @@ const base = import.meta.env.BASE_URL;
       { src: "images/page/p-4.png", speed: 0.9 },
     ]} />
 
-    <PageContent
-      title={"Test2"}
-      slug={"test2"}
-      contentHTML={"<div class=\"payload-richtext\"><p>Test content</p></div>"}
-      metaTitle={"Meta Test2"}
-      metaImage={"https://ssg-drive-lp.s3.ap-southeast-2.amazonaws.com/placeholder.webp"}
-      metaDescription={"Meta descript Test2"}
+    <SimpleContent
+      contentHTML={"<div class=\"payload-richtext\"><p>Test</p></div>"}
+    />
+
+    <ImageTextBackground
+        imageSrc={"images/placeholder.webp"}
+        imageAlt={"Placeholder"}
+        imagePosition={"left"}
+        bgColor={"black"}
+        heading={"Heading"}
+        textHTML={"<div class=\"payload-richtext\"><p>this is some <strong>text</strong></p></div>"}
+        buttons={[{"text":"But1","link":"#","outline":true,"btnColor":"blue"},{"text":" But2","link":"#","outline":false,"btnColor":"white"}]}
+    />
+
+    <ImageTextBackground
+        imageSrc={"images/placeholder.webp"}
+        imageAlt={"Placeholder"}
+        imagePosition={"right"}
+        bgColor={"lightBlue"}
+        heading={"Heading"}
+        textHTML={"<div class=\"payload-richtext\"><p>this is some <strong>text</strong></p></div>"}
+        buttons={[{"text":"But1","link":"#","outline":true,"btnColor":"blue"},{"text":" But2","link":"#","outline":true,"btnColor":"blue"}]}
+    />
+
+    <ImageTextBackground
+      imageSrc={"images/placeholder.webp"}
+      imageAlt={"Placeholder"}
+      imagePosition={"left"}
+      bgColor={"darkBlue"}
+      heading={"Heading"}
+      textHTML={"<div class=\"payload-richtext\"><p>this is some <strong>text</strong></p></div>"}
+      buttons={[{"text":"But1","link":"#","outline":true,"btnColor":"blue"},{"text":" But2","link":"#","outline":false,"btnColor":"white"}]}
     />
 
     <DriveForm />

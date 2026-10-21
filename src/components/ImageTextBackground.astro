@@ -1,0 +1,100 @@
+---
+interface Button {
+  text: string;
+  link: string;
+  outline: boolean;
+  btnColor: "white" | "blue";
+}
+
+interface Props {
+  imageSrc: string | null;
+  imageAlt: string;
+  imagePosition: "left" | "right";
+  bgColor: "black" | "lightBlue" | "darkBlue";
+  heading: string;
+  textHTML: string;
+  buttons: Button[];
+}
+
+const {
+  imageSrc,
+  imageAlt,
+  imagePosition,
+  bgColor,
+  heading,
+  textHTML,
+  buttons,
+} = Astro.props;
+
+const backgroundClasses = {
+  black: "bg-black text-white",
+  lightBlue: "bg-sky-100 text-gray-900",
+  darkBlue: "bg-blue-950 text-white",
+};
+
+const buttonClasses = {
+  white: {
+    filled:
+      "border-white bg-white text-black hover:bg-gray-200",
+    outline:
+      "border-white text-white hover:bg-white hover:text-black",
+  },
+  blue: {
+    filled:
+      "border-blue-600 bg-blue-600 text-white hover:bg-blue-700",
+    outline:
+      "border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white",
+  },
+};
+---
+
+<section
+  class:list={[
+    "flex flex-col md:min-h-[450px] md:flex-row",
+    backgroundClasses[bgColor] ?? backgroundClasses.black,
+    imagePosition === "right" && "md:flex-row-reverse",
+  ]}
+>
+  <!-- Image -->
+  <div class="min-h-[280px] md:min-h-0 md:w-1/2">
+    {imageSrc && (
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        class="h-full min-h-[280px] max-h-[420px] w-full object-cover md:max-h-none"
+      />
+    )}
+  </div>
+
+  <!-- Text content -->
+  <div class="flex items-center px-6 py-12 md:w-1/2 md:px-12 lg:px-16">
+    <div class="w-full">
+      <h2 class="mb-6 text-3xl font-bold md:text-4xl">
+        {heading}
+      </h2>
+
+      <div
+        class="max-w-2xl"
+        set:html={textHTML}
+      />
+
+      {buttons.length > 0 && (
+        <div class="mt-8 flex flex-wrap gap-4">
+          {buttons.map((button) => (
+            <a
+              href={button.link}
+              class:list={[
+                "inline-flex items-center justify-center rounded-md border-2 px-6 py-3 font-semibold transition-colors",
+                buttonClasses[button.btnColor]?.[
+                  button.outline ? "outline" : "filled"
+                ] ?? buttonClasses.blue.filled,
+              ]}
+            >
+              {button.text}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

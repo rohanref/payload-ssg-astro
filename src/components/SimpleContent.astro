@@ -1,0 +1,11 @@
+---
+interface Props {
+  contentHTML: string;
+}
+
+const { contentHTML } = Astro.props;
+---
+
+<section class="w-full px-6 py-12">
+  <div set:html={contentHTML} />
+</section>
