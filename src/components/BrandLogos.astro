@@ -1,0 +1,55 @@
+
+---
+interface Logo {
+  imageSrc: string | null;
+  imageAlt: string;
+}
+
+interface Props {
+  heading: string;
+  bgColor: "white" | "black";
+  logos: Logo[];
+}
+
+const { heading, bgColor, logos } = Astro.props;
+
+const backgroundClasses = {
+  white: "bg-white text-gray-900",
+  black: "bg-black text-white",
+};
+---
+
+<section
+  class:list={[
+    "px-5 py-16",
+    backgroundClasses[bgColor] ?? backgroundClasses.white,
+  ]}
+>
+  <div class="mx-auto w-full max-w-[1300px]">
+    <!-- Heading -->
+    <h2 class="mb-10 text-center text-3xl font-bold md:text-4xl">
+      {heading}
+    </h2>
+
+    <!-- Logo Grid -->
+    <div class="grid grid-cols-3 items-center justify-items-center gap-8 md:grid-cols-3 lg:grid-cols-6">
+    {logos.map((logo) => (
+        <div
+        class:list={[
+            "flex w-full items-center justify-center",
+            logos.length === 1 && "col-span-full",
+        ]}
+        >
+        {logo.imageSrc && (
+            <img
+            src={logo.imageSrc}
+            alt={logo.imageAlt}
+            class="max-h-20 w-full max-w-[160px] object-contain"
+            loading="lazy"
+            />
+        )}
+        </div>
+    ))}
+    </div>
+  </div>
+</section>

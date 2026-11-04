@@ -23,6 +23,8 @@ import DriveForm from "../components/DriveForm.astro";
 import PageContent from "../components/PageContent.astro";
 import SimpleContent from "../components/SimpleContent.astro";
 import ImageTextBackground from "../components/ImageTextBackground.astro";
+import Faqs from "../components/Faqs.astro";
+import BrandLogos from "../components/BrandLogos.astro";
 
 // Old Components
 import DriveHero from "../old-components/DriveHero.astro";
@@ -93,6 +95,23 @@ const base = import.meta.env.BASE_URL;
       heading={"Heading"}
       textHTML={"<div class=\"payload-richtext\"><p>this is some <strong>text</strong></p></div>"}
       buttons={[{"text":"But1","link":"#","outline":true,"btnColor":"blue"},{"text":" But2","link":"#","outline":false,"btnColor":"white"}]}
+    />
+
+    <Faqs
+      heading={"Heading"}
+      questions={[{"question":"Why you do this?","answerHTML":"<div class=\"payload-richtext\"><p>I don&#39;t know</p></div>"},{"question":"What is the meaning of life?","answerHTML":"<div class=\"payload-richtext\"><p>I don&#39;t know</p></div>"}]}
+    />
+
+    <BrandLogos
+      heading={"Brand logos below"}
+      bgColor={"white"}
+      logos={[{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"}]}
+    />
+
+  <BrandLogos
+      heading={"Brand logos below"}
+      bgColor={"black"}
+      logos={[{"imageSrc":"images/placeholder.webp","imageAlt":"Placeholder"},]}
     />
 
     <DriveForm />
