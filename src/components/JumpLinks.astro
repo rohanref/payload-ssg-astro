@@ -1,0 +1,40 @@
+---
+interface JumpLink {
+  text: string;
+  link: string;
+}
+
+interface Props {
+  links: JumpLink[];
+  ctaLinkText: string;
+  ctaLink: string;
+}
+
+const { links, ctaLinkText, ctaLink } = Astro.props;
+---
+
+<section class="sticky top-0 z-50 w-full bg-black px-5 py-5 text-white">
+  <div class="mx-auto flex w-full max-w-[1300px] flex-col items-center justify-between gap-5 md:flex-row">
+    <!-- Jump Links - Left -->
+    <nav class="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 md:justify-start">
+      {links.map((item) => (
+        <a
+          href={item.link}
+          class="text-sm font-medium text-white transition-colors hover:text-gray-400 md:text-base"
+        >
+          {item.text}
+        </a>
+      ))}
+    </nav>
+
+    <!-- CTA - Right -->
+    {ctaLink && ctaLinkText && (
+      <a
+        href={ctaLink}
+        class="inline-flex shrink-0 items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
+      >
+        {ctaLinkText}
+      </a>
+    )}
+  </div>
+</section>
